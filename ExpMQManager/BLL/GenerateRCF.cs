@@ -39,7 +39,7 @@ namespace ExpMQManager.BLL
 
             // modified. 2017-7-6. use flight date with day change indicator.
             string rcfTime = msgEntity.arrFlightMasterDate.ToString("dd") + transMonth(msgEntity.arrFlightMasterDate.ToString("MM"));
-            //rcfTime += msgEntity.arrFlightMasterDate.ToString("HH") + msgEntity.arrFlightMasterDate.ToString("mm");
+            rcfTime += msgEntity.arrCargoDate.ToString("HH") + msgEntity.arrCargoDate.ToString("mm");
 
             try
             {
