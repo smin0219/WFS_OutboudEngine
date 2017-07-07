@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net.Mail;
+using System.Net;
+
+namespace ExpMQManager
+{
+    public class baseMail
+    {
+        public static Boolean mailSend(string sAddress, string Msg, string Subject)
+        {
+
+            try
+            {
+                string sLoginUserEmail = "EpicSupport@casusa.com";  //Using account when log in
+                SmtpClient smtp = new SmtpClient("10.3.0.3", 25);
+                MailMessage m = new MailMessage();
+                m.From = new MailAddress(sLoginUserEmail, "Cargo Airport Services, LLC");
+
+                if (sAddress.IndexOf(";") > -1)
+                {
+                    string[] result = sAddress.Split(';');
+                    string msAddress = "";
+                    for (int i = 0; i < result.Length; i++)
+                    {
+                        msAddress = result[i].ToString();
+                        m.To.Add(new MailAddress(msAddress));
+                    }
+                }
+                else
+                    m.To.Add(new MailAddress(sAddress));
+
+                m.Subject = Subject;
+                m.Body = Msg;
+                m.IsBodyHtml = true;
+                smtp.Send(m);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MQbuildMsg.buildLog(0, ex.Message, ex.StackTrace);        //Write a log to file I/O
+                return false;
+            }
+        }
+
+    }
+}

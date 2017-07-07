@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.Data;
+using System.Data;
+
+namespace ExpMQManager.DAL
+{
+    public class RcsDAC : BaseDAC
+    {
+        public RcsEntity GetRCSInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        {
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+
+            string strSql = "";
+            strSql = @" SELECT MID, cnee, Pcs, Weight,
+                               (SELECT CreatedDate FROM Exp_MasterAccept WHERE iid =
+                                (SELECT MAX(iid) FROM Exp_MasterAccept WHERE MID = A.MID)) rcsTime
+                        FROM Exp_Master A
+                        WHERE A.MID = {0} 
+                    ";
+            strSql = string.Format(strSql, mid, flightSeq);
+
+            return GetRCSfromReader(baseAWB, ExecuteReader(strSql));
+        }
+
+        public RcsEntity GetRCSfromReader(BaseEntity baseEntity, IDataReader reader)
+        {
+            RcsEntity rcsEntity = new RcsEntity();
+            if (reader.Read())
+            {
+                rcsEntity = new RcsEntity(
+                    baseEntity,
+                    (DateTime)reader["rcsTime"],
+                    reader["cnee"].ToString().Trim());
+
+                reader.Close();
+                return rcsEntity;
+            }
+
+            return rcsEntity;
+        }
+    }
+}

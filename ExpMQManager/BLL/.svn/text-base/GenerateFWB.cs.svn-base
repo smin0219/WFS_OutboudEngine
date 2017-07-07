@@ -1,0 +1,170 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.DAL;
+using ExpMQManager.Data;
+
+namespace ExpMQManager.BLL
+{
+    public class GenerateFWB : GenerateBase
+    {
+        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        {
+            FwbEntity fwbEntity = new FwbDAC().GetFWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            return buildUpFWB(fwbEntity, msgType, subType);
+        }
+
+        public string buildUpFWB(FwbEntity msgEntity, string msgType, string subType)
+        {
+            string strAWB = "";
+
+            strAWB = base.buildUpBase(msgEntity, msgType, subType);
+
+            DateTime nowDate = DateTime.Now;
+            string msgDate = nowDate.ToString("dd") + transMonth(nowDate.ToString("MM")) + nowDate.ToString("yy");
+
+            string weightFormatted = string.Format("{0:0.0}", msgEntity.weight);
+
+            char shipmentCode = replaceShipmentIndicator(msgEntity.shipmentIndicator[0]);
+
+            //RTG 
+            strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier + "\r\n";
+
+            //SHP
+            strAWB += "SHP" + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.shipperNm, 35) + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.shipperAddr + msgEntity.shipperAddr2, 35) + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.shipperCity, 17);
+            
+            if (msgEntity.shipperState != "")
+                strAWB += "/" + truncateString(msgEntity.shipperState, 9);
+            
+            strAWB += "\r\n";
+            strAWB += "/" + "US";
+
+            if (msgEntity.shipperZip != "")
+                strAWB += "/" + truncateString(msgEntity.shipperZip, 9);
+
+            strAWB += "\r\n";
+
+            //CNE
+            strAWB += "CNE" + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.cneeNm, 35) + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.cneeAddr, 35) + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.cneeCity, 17);
+            if (msgEntity.cneeProv != "")
+                strAWB += "/" + truncateString(msgEntity.cneeProv, 9);
+            strAWB += "\r\n";
+
+            strAWB += "/" + truncateString(msgEntity.cneeCountry, 2) + "\r\n";     //"/" + truncateString(msgEntity.shipperZip, 9) +
+
+            //AGT
+            strAWB += "AGT" + "/" + "/" + msgEntity.agentIATACd;
+            if (msgEntity.agentCASSaddr.Length == 4)
+            {
+                try
+                {
+                    //CASS Address Numbers Only
+                    Convert.ToInt16(msgEntity.agentCASSaddr);
+                    strAWB += "/" + msgEntity.agentCASSaddr;
+                }
+                catch { }
+            }
+            strAWB +="\r\n";
+            strAWB += "/" + truncateString(msgEntity.agentNm, 35) + "\r\n";
+            strAWB += "/" + truncateString(msgEntity.agentCity, 17) + "\r\n";
+
+            //CVD
+            strAWB += "CVD" + "/" + msgEntity.currency + "/" + msgEntity.chargeCd + "/";
+            strAWB += msgEntity.preChargeWeightCd + msgEntity.preChargeOtherCd + "/";
+            
+            if (msgEntity.carriageVal == 0.00)
+                strAWB += "NVD" + "/";
+            else
+                strAWB += string.Format("{0:0.00}", msgEntity.carriageVal) + "/";
+
+            if (msgEntity.customVal == 0.00)
+                strAWB += "NCV" + "/";
+            else
+                strAWB += string.Format("{0:0.00}", msgEntity.customVal) + "/";
+
+            if (msgEntity.insuranceVal == 0.00)
+                strAWB += "XXX" + "\r\n";
+            else
+                strAWB += string.Format("{0:0.00}", msgEntity.insuranceVal) + "\r\n";
+            
+            int index = 1;
+            //RTD
+            foreach (FwbRateEntity fwbRateEntity in msgEntity.colRTD)
+            {
+                if (index == 1)
+                    strAWB += "RTD";
+                strAWB += "/" + index++ + "/" + "P" + fwbRateEntity.pcsRTD + "/";
+                strAWB += "K" + string.Format("{0:0.0}", fwbRateEntity.weightRTD) + "/";
+                strAWB += "C" + fwbRateEntity.classRTD + "/";
+                strAWB += "W" + string.Format("{0:0.0}", fwbRateEntity.chargeWeight) + "/";
+                strAWB += "R" + string.Format("{0:0.00}", fwbRateEntity.rateCharge) + "/";
+                strAWB += "T" + string.Format("{0:0.0}", fwbRateEntity.total) + "\r\n";
+                if (fwbRateEntity.natureOfGoods != "")
+                {
+                    strAWB += "/" + "N" + fwbRateEntity.goodsType + "/";
+                    strAWB += truncateString(fwbRateEntity.natureOfGoods, 20) + "\r\n";
+                }
+            }
+
+            foreach (FwbVolumeEntity fwbVolEntity in msgEntity.colVol)
+            {
+                strAWB += "/" + index++ + "/" + "ND" + "/";
+
+                if (fwbVolEntity.pcsWeight > 0)
+                    strAWB += "K" + string.Format("{0:0.00}", fwbVolEntity.pcsWeight * fwbVolEntity.pcsDim);
+                else
+                    strAWB += "K" + "0";
+
+                strAWB += "/";
+                
+                if (fwbVolEntity.length > 0 && fwbVolEntity.width > 0 && fwbVolEntity.height > 0)
+                    strAWB += fwbVolEntity.unitCode + fwbVolEntity.length + "-" + fwbVolEntity.width + "-" + fwbVolEntity.height + "/" + fwbVolEntity.pcsDim;
+                else
+                    strAWB += "NDA";
+
+                strAWB += "\r\n";
+
+                if (fwbVolEntity.volWeight > 0)
+                {
+                    strAWB += "/" + index++ + "/" + "NV" + "/";
+                    
+                    if (fwbVolEntity.unitCode == "INH")
+                        strAWB += "CI";
+                    else
+                        strAWB += "MC";
+
+                    strAWB += string.Format("{0:0.00}", fwbVolEntity.volWeight) + "\r\n";
+                }
+            }
+
+            //OTH
+            index = 1;
+            foreach (FwbOtherChargeEntity fwbOtherChargeEntity in msgEntity.colCharge)
+            {
+                if (index == 1)
+                    strAWB += "OTH";
+                strAWB += "/" + fwbOtherChargeEntity.prepaidIndicator + "/"
+                    + fwbOtherChargeEntity.chargeCode + fwbOtherChargeEntity.entitlement
+                    + string.Format("{0:0.00}",fwbOtherChargeEntity.chargeAmt) + "\r\n";
+
+                index++;
+            }
+
+            //ISU
+            strAWB += "ISU" + "/" + msgDate + "/" + msgEntity.awbPlace +"\r\n";
+
+            //REF
+            strAWB += "REF" + "/" + "JFKCDCR" + "\r\n";
+
+            return strAWB.ToUpper();
+        }
+
+    }
+}

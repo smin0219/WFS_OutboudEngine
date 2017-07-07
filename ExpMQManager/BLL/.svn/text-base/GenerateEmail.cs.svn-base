@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.DAL;
+using ExpMQManager.Data;
+
+namespace ExpMQManager.BLL
+{
+    public class GenerateEmail : GenerateBase
+    {
+        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        {
+            //Do nothing
+            return string.Empty;
+        }
+
+        public int sendEamil(int mailQueueId)
+        {
+            string receiverAddr = "";
+            EmailEntity emailEntity = new EmailDAC().GetEmailInfoDAC(mailQueueId);
+
+            foreach(string receiver in emailEntity.receiver)
+            {
+                if (receiverAddr != "")
+                    receiverAddr += ";";
+                receiverAddr += receiver;
+            }
+
+            if (ExpMQManager.baseMail.mailSend(receiverAddr, emailEntity.contents, emailEntity.subject))
+                return 0;
+            else
+                return -1;
+
+        }
+    }
+}

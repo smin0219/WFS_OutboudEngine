@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.Data;
+using System.Data;
+
+namespace ExpMQManager.DAL
+{
+    public class DlvDAC : BaseDAC
+    {
+        public DlvEntity GetDLVInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        {
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+
+            string strSql = "";
+            strSql = @" SELECT WHCFTime, idnum, A.MID, cnee,
+	                           (SELECT mPcs FROM ePic_WH_DLV_Log WHERE iid =
+	                            (SELECT MAX(iid) FROM dbo.ePic_WH_DLV_Log WHERE MID = {0})) pcs,
+	                           A.weight 	
+                        FROM CC_CashTB A
+                        JOIN ePic_Master2 B ON A.MID = B.MID
+                        WHERE A.MID = {0}
+                    ";
+            strSql = string.Format(strSql, mid, msgType);
+
+            return GetDLVFromReader(baseAWB, ExecuteReader(strSql));
+        }
+
+        protected DlvEntity GetDLVFromReader(BaseEntity baseEntity, IDataReader reader)
+        {
+            if (!reader.IsClosed)
+            {
+                reader.Read();
+
+                int pcs = 0; try { pcs = (int)reader["pcs"]; } catch { }
+                double weight = 0.00; try { weight = Convert.ToDouble(reader["weight"].ToString()); } catch (Exception e) { }
+
+                DlvEntity dlvEntity = new DlvEntity(
+                    baseEntity,
+                    (DateTime)reader["WHCFTime"],
+                    pcs,
+                    weight,
+                    reader["cnee"].ToString().Trim());
+
+                reader.Close();
+                return dlvEntity;
+            }
+            else
+            {
+                DlvEntity dlvEntity = new DlvEntity();
+                return dlvEntity;
+            }
+        }
+
+    }
+}

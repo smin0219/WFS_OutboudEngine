@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace ExpMQManager
+{
+    public class BaseDB : IDisposable
+    {
+
+        void IDisposable.Dispose() { }
+
+        public static bool isLive = false;
+
+        public DataTable GetSqlDataTable(string strsql)
+        {
+            DataTable table = new DataTable();
+            SqlConnection dbcn = new SqlConnection(getConnectionString());
+            SqlCommand cmd = new SqlCommand(strsql, dbcn);
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+
+            try
+            {
+                dbcn.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandTimeout = 320;
+                sda.Fill(table);
+                return table;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dbcn.Dispose();
+                sda.Dispose();
+                cmd.Dispose();
+            }
+        }
+
+        public SqlDataReader GetSqlDataReader(string strsql)
+        {
+            SqlDataReader dr;
+            using (SqlConnection dbcn = new SqlConnection(getConnectionString()))
+            {
+                dbcn.Open();
+                SqlCommand command = new SqlCommand(strsql, dbcn);
+                dr = command.ExecuteReader();
+                return dr;
+            }
+        }
+
+        public IDataReader ExecuteReader(string strSql)
+        {
+            SqlConnection dbcn = new SqlConnection(getConnectionString());
+            dbcn.Open();
+            SqlCommand command = new SqlCommand(strSql, dbcn);
+            return command.ExecuteReader(CommandBehavior.Default);
+            //return command.ExecuteReader();
+        }
+
+        public DataTable GetSqlDataTable(SqlCommand command)
+        {
+            DataTable table = new DataTable();
+            SqlDataAdapter sda;
+            using (SqlConnection dbcn = new SqlConnection(getConnectionString()))
+            {
+                dbcn.Open();
+                command.Connection = dbcn;
+                command.CommandTimeout = 320;
+                sda = new SqlDataAdapter(command);
+                sda.Fill(table);
+
+                return table;
+            }
+        }
+
+        public int ExecCommand(SqlCommand command)
+        {
+            int i = 0;
+            using (SqlConnection dbcn = new SqlConnection(getConnectionString()))
+            {
+                dbcn.Open();
+                command.Connection = dbcn;
+                i = command.ExecuteNonQuery();
+            }
+            return i;
+        }
+
+
+
+        public int ExecCommand(string commandString)
+        {
+            SqlConnection dbcn = new SqlConnection(getConnectionString());
+            SqlCommand cmd = new SqlCommand(commandString, dbcn);
+            try
+            {
+                dbcn.Open();
+                return cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dbcn.Dispose();
+                cmd.Dispose();
+            }
+        }
+
+        public static string getConnectionString()
+        {
+            string connectionString = "";
+            if (isLive)
+            {
+                connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=casnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
+            }
+            else
+            {
+                connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=testcasnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
+            }
+
+            return connectionString;
+
+        }
+
+
+    }
+}

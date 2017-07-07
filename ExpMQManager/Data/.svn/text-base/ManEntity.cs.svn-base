@@ -1,0 +1,112 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ExpMQManager.Data
+{
+    public class ManEntity : BaseEntity
+    {
+        public ManEntity()
+        {
+            //Empty Constructor
+        }
+
+        public ManEntity(BaseEntity baseEntity, int __pcsMAN, double __weightMAN,
+            string __shipmentIndicatorMAN, DateTime __depDate, string __depDateType, 
+            DateTime __arrDate, string __arrDateType, string __dayChangeIndicator, string __flightNo)
+        {
+            this.queueId = baseEntity.queueId;
+            this.msgType = baseEntity.msgType;
+            this.subMsgType = baseEntity.subMsgType;
+            this.msgDestAddr = baseEntity.msgDestAddr;
+            this.msgVersion = baseEntity.msgVersion;
+            this.mid = baseEntity.mid;
+            this.flightSeq = baseEntity.flightSeq;
+            this.Lcode = baseEntity.Lcode;
+            this.Ccode = baseEntity.Ccode;
+            this.createdDate = baseEntity.createdDate;
+            this.createdBy = baseEntity.createdBy;
+            this.prefix = baseEntity.prefix;
+            this.awb = baseEntity.awb;
+            this.origin = baseEntity.origin;
+            this.dest = baseEntity.dest;
+            this.destFlight = baseEntity.destFlight;
+            this.shipmentIndicator = baseEntity.shipmentIndicator;
+            this.pcs = baseEntity.pcs;
+            this.weight = baseEntity.weight;
+
+            //Derived Class member
+            this.pcsMAN = __pcsMAN;
+            this.weightMAN = __weightMAN;
+            this.shipmentIndicatorMAN = __shipmentIndicatorMAN;
+            this._depDate = __depDate;
+            this._depDateType = __depDateType;
+            this._arrDate = __arrDate;
+            this._arrDateType = __arrDateType;
+            this.dayChangeIndicator = __dayChangeIndicator;
+            this.flightNo = __flightNo;
+        }
+
+        private int _pcsMAN = 0;
+        public int pcsMAN
+        {
+            get { return _pcsMAN; }
+            set { _pcsMAN = value; }
+        }
+
+        private double _weightMAN = 0.00;
+        public double weightMAN
+        {
+            get { return _weightMAN; }
+            set { _weightMAN = value; }
+        }
+
+        private string _shipmentIndicatorMAN = "";
+        public string shipmentIndicatorMAN
+        {
+            get
+            {
+                if (_shipmentIndicatorMAN == "") return "T";
+                else return _shipmentIndicatorMAN;
+            }
+            set { _shipmentIndicatorMAN = value; }
+        }
+
+        private DateTime _depDate = Convert.ToDateTime("1/1/0001");
+        public DateTime depDate
+        {
+            get { return _depDate; }
+            set { _depDate = value; }
+        }
+
+        private string _depDateType = "";
+        public string depDateType
+        {
+            get { return _depDateType; }
+            set { _depDateType = value; }
+        }
+
+        private DateTime _arrDate = Convert.ToDateTime("1/1/0001");
+        public DateTime arrDate
+        {
+            get { return _arrDate; }
+            set { _arrDate = value; }
+        }
+
+        private string _arrDateType = "";
+        public string arrDateType
+        {
+            get { return _arrDateType; }
+            set { _arrDateType = value; }
+        }
+
+        private string _dayChangeIndicator = "";
+        public string dayChangeIndicator
+        {
+            get { return _dayChangeIndicator; }
+            set { _dayChangeIndicator = value; }
+        }
+
+    }
+}

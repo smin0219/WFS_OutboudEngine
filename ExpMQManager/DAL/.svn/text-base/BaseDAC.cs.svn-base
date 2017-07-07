@@ -1,0 +1,349 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.Data;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace ExpMQManager.DAL
+{
+    public class BaseDAC : BaseEntity
+    {
+        public BaseEntity GetBaseAWBInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        {
+            string strSql = "";
+            BaseEntity baseEntity = new BaseEntity();
+
+            if (msgType == "FSU")
+            {
+                switch (subType)
+                {
+                    /* Import Common Message Header */
+                    case "DLV":
+                    case "RCF":
+                    case "NFD":
+                    case "AWD":
+                    case "ARR":
+                        strSql = @" SELECT A.iid ,A.msgType ,A.subMsgType ,A.MID ,FlightSeq ,A.Lcode
+	                                      ,A.Ccode ,A.createdDate ,A.CreatedBy ,Prefix ,AWB
+	                                      ,OriginPortCd OriginCd ,DestinationPortCd DestCd, Dest
+	                                      ,Partial ,Pcs ,Weight ,msgVersion ,msgAddress
+                                    FROM EDI_Msg_Queue A
+                                    LEFT JOIN ePic_Master2 B ON A.MID = B.MID
+                                    LEFT JOIN (SELECT MID, MAX(Partial) Partial, MAX(FinalDest) Dest 
+		                                    FROM ePic_FlightMaster GROUP BY MID) C ON A.MID = C.MID
+                                    LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, MIN(Active) Active 
+		                                    FROM EDI_Address GROUP BY Carrier, MsgType) D ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1'	
+                                    WHERE A.MID = {0} AND A.msgType = 'FSU' AND subMsgType = '{1}' AND A.Status = 'W' 		
+                            ";
+                        strSql = string.Format(strSql, mid, subType);
+                        break;
+
+                    /* Export Common Message Header */
+                    case "MAN":
+                    case "RCS":
+                    case "DEP":
+                        strSql = @"SELECT A.iid ,A.msgType ,A.subMsgType ,A.MID ,FlightSeq ,A.Lcode
+                                          ,A.Ccode ,A.createdDate ,A.CreatedBy ,Prefix ,AWB
+                                          ,OriginCd ,DestCd, Dest
+                                          ,Partial ,Pcs ,Weight ,msgVersion ,msgAddress
+                                    FROM EDI_Msg_Queue A
+                                    LEFT JOIN Exp_Master B ON A.MID = B.MID
+                                    LEFT JOIN (SELECT MID, MAX(Partial) Partial, MAX(DestCd) Dest 
+                                            FROM Exp_FlightMaster GROUP BY MID) C ON A.MID = C.MID
+                                    LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, MIN(Active) Active 
+                                            FROM EDI_Address GROUP BY Carrier, MsgType) D ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1'
+                                    WHERE A.MID = {0} AND A.msgType = 'FSU' AND subMsgType = '{1}' AND A.Status = 'W' 
+                            ";
+                        strSql = string.Format(strSql, mid, subType);
+                        break;
+                }
+
+                baseEntity = GetBaseAWBFromReader(ExecuteReader(strSql));
+            }
+
+            if (msgType == "FFM")
+            {
+                strSql = @" SELECT A.iid ,A.msgType ,A.subMsgType ,FlightSeq ,A.Lcode
+                                  ,A.Ccode ,A.createdDate ,A.CreatedBy ,msgVersion ,msgAddress
+                                  ,A.FlightNo ,Origin ,DepDate
+                            FROM EDI_Msg_Queue A
+                            JOIN Exp_FlightSeq B ON A.FlightSeq = B.FlightId
+                            LEFT JOIN (SELECT FlightId, UtcDepDate DepDate FROM Exp_FlightSeqMsg WHERE SeqNo = 
+		                            (SELECT MAX(SeqNo) FROM Exp_FlightSeqMsg WHERE FlightId = {0} AND UtcDepDateType = 'A')) 
+	                            C ON A.FlightSeq = C.FlightId
+                            LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, MIN(Active) Active 
+                                    FROM EDI_Address GROUP BY Carrier, MsgType) D ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1' 
+                            WHERE FlightSeq = {0} AND A.MsgType = 'FFM' AND A.Status = 'W'
+                        ";
+                strSql = string.Format(strSql, flightSeq);
+
+                baseEntity = GetBaseFFMFromReader(ExecuteReader(strSql));
+            }
+
+            if (msgType == "FWB")
+            {
+                strSql = @" SELECT A.iid ,A.msgType ,A.subMsgType ,FlightSeq ,A.Lcode
+                                  ,A.Ccode ,A.createdDate ,A.CreatedBy ,msgVersion ,msgAddress
+                                  ,A.Carrier ,OriginCd ,DestCd ,Pcs ,Weight ,AwbPOU Dest
+                                  ,Prefix ,AWB ,A.MID
+                            FROM EDI_Msg_Queue A
+                            JOIN Exp_Master B ON A.MID = B.MID
+                            LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, MIN(Active) Active 
+                                    FROM EDI_Address GROUP BY Carrier, MsgType) D ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1' 
+                            WHERE A.MID = {0}  AND A.MsgType = 'FWB' AND A.Status = 'W'
+                        ";
+                strSql = string.Format(strSql, mid);
+
+                baseEntity = GetBaseFWBFromReader(ExecuteReader(strSql));
+
+            }
+
+            if (msgType == "IRP")
+            {
+                strSql = @" SELECT A.iid ,A.msgType ,SITAAddy msgAddress
+                            FROM EDI_Msg_Queue A
+                            JOIN AL_IRP B ON A.MID = B.idnum
+                            WHERE MID = {0} AND A.MsgType = 'IRP' AND A.Status = 'W'
+                        ";
+                strSql = string.Format(strSql, mid);
+
+                baseEntity = GetBaseIRPFromReader(ExecuteReader(strSql));
+
+            }
+
+            return baseEntity;
+        }
+
+        protected BaseEntity GetBaseFFMFromReader(IDataReader reader)
+        {
+            if (reader.Read())
+            {
+                int queueId = 0; try { queueId = (int)reader["iid"]; } catch { }
+                int msgVersion = 0; try { msgVersion = (int)reader["msgVersion"]; } catch { }
+                int mid = 0; try { mid = (int)reader["MID"]; }  catch { }
+                int flightSeq = 0; try { flightSeq = (int)reader["flightSeq"]; } catch { }
+
+                BaseEntity baseEntity = new BaseEntity(
+                    queueId,
+                    reader["msgType"].ToString(),
+                    reader["msgAddress"].ToString(),
+                    msgVersion,
+                    flightSeq,
+                    (DateTime)reader["DepDate"],
+                    reader["Origin"].ToString(),
+                    reader["Lcode"].ToString(),
+                    reader["Ccode"].ToString(),
+                    reader["FlightNo"].ToString());
+
+                reader.Close();
+                return baseEntity;
+            }
+            else
+            {
+                BaseEntity baseEntity = new BaseEntity();
+                return baseEntity;
+            }
+
+
+        }
+
+        protected BaseEntity GetBaseAWBFromReader(IDataReader reader)
+        {
+            if (reader.Read())
+            {
+                int queueId = 0; try { queueId = (int)reader["iid"]; } catch { }
+                int msgVersion = 0; try { msgVersion = (int)reader["msgVersion"]; } catch { }
+                int mid = 0; try { mid = (int)reader["MID"]; }  catch { }
+                int flightSeq = 0; try { flightSeq = (int)reader["flightSeq"]; } catch { }
+                int pcs = 0; try { pcs = (int)reader["pcs"]; } catch { }
+                double weight = 0.00; try { weight = Convert.ToDouble(reader["Weight"].ToString()); } catch (Exception e) { }
+
+                BaseEntity baseEntity = new BaseEntity(
+                    queueId,
+                    reader["msgType"].ToString().Trim(),
+                    reader["subMsgType"].ToString().Trim(),
+                    reader["msgAddress"].ToString().Trim(),
+                    msgVersion,
+                    mid,
+                    flightSeq,
+                    reader["Lcode"].ToString().Trim(),
+                    reader["Ccode"].ToString().Trim(),
+                    (DateTime)reader["createdDate"],
+                    reader["createdBy"].ToString().Trim(),
+                    reader["prefix"].ToString().Trim(),
+                    reader["AWB"].ToString().Trim(),
+                    reader["OriginCd"].ToString().Trim(),
+                    reader["DestCd"].ToString().Trim(),
+                    reader["Dest"].ToString().Trim(),
+                    reader["Partial"].ToString().Trim(),
+                    pcs,
+                    weight);
+
+                reader.Close();
+
+                return baseEntity;
+            }
+            else
+            {
+                BaseEntity baseEntity = new BaseEntity();
+                return baseEntity;
+            }
+        }
+
+        protected BaseEntity GetBaseIRPFromReader(IDataReader reader)
+        {
+            if (reader.Read())
+            {
+                int queueId = 0; try { queueId = (int)reader["iid"]; }
+                catch { }
+
+                BaseEntity baseEntity = new BaseEntity(
+                    queueId,
+                    reader["msgType"].ToString().Trim(),
+                    reader["msgAddress"].ToString().Trim());
+
+                reader.Close();
+
+                return baseEntity;
+            }
+            else
+            {
+                BaseEntity baseEntity = new BaseEntity();
+                return baseEntity;
+            }
+
+        }
+
+        protected BaseEntity GetBaseFWBFromReader(IDataReader reader)
+        {
+            if (reader.Read())
+            {
+                //reader.Read();
+
+                int queueId = 0; try { queueId = (int)reader["iid"]; }
+                catch { }
+                int msgVersion = 0; try { msgVersion = (int)reader["msgVersion"]; }
+                catch { }
+                int mid = 0; try { mid = (int)reader["MID"]; }
+                catch { }
+                int pcs = 0; try { pcs = (int)reader["pcs"]; }
+                catch { }
+                double weight = 0.00; try { weight = Convert.ToDouble(reader["Weight"].ToString()); }
+                catch (Exception e) { }
+
+                BaseEntity baseEntity = new BaseEntity(
+                    queueId,
+                    reader["msgType"].ToString().Trim(),
+                    reader["msgAddress"].ToString().Trim(),
+                    msgVersion,
+                    mid,
+                    (DateTime)reader["createdDate"],
+                    reader["createdBy"].ToString().Trim(),
+                    reader["prefix"].ToString().Trim(),
+                    reader["AWB"].ToString().Trim(),
+                    reader["OriginCd"].ToString().Trim(),
+                    reader["DestCd"].ToString().Trim(),
+                    reader["Dest"].ToString().Trim(),
+                    pcs,
+                    weight,
+                    reader["Carrier"].ToString());
+
+                reader.Close();
+
+                return baseEntity;
+            }
+            else
+            {
+                BaseEntity baseEntity = new BaseEntity();
+                return baseEntity;
+            }
+        }
+
+        public int UpdateQueue(int queueId, string status, string errMsg)
+        {
+            string strSql = "";
+            int result = 0;
+
+            string errUpdate = "";
+            if (errMsg != "")
+                errUpdate = " ,ErrorMsg = '" + errMsg.Replace("'", "''") + "' ";
+
+            strSql = @" UPDATE EDI_Msg_Queue SET Status = '{1}' {2} WHERE iid = {0}";
+            strSql = string.Format(strSql, queueId, status, errUpdate);
+
+            if (!strSql.Equals(string.Empty))
+            {
+                try { result = ExecCommand(strSql); }
+                catch (SqlException e) { result = -1; }
+            }
+
+            return result;
+        }
+
+        public int UpdateEmailQueue(int mailQueueId, int status)
+        {
+            string strSql = "";
+            int result = 0;
+
+            strSql = @" UPDATE Email_Notification_Queue SET Status = {1} WHERE SeqNo = {0}";
+            strSql = string.Format(strSql, mailQueueId, status);
+
+            if (!strSql.Equals(string.Empty))
+            {
+                try { result = ExecCommand(strSql); }
+                catch (SqlException e) { result = -1; }
+            }
+
+            return result;
+        }
+
+        public int InsertLog(int queueId, string msgBody, string msgType)
+        {
+            string strSql = "";
+            int result = 0;
+
+            if (msgType.ToUpper() == "IRP")
+            {
+                strSql = @" INSERT INTO EDI_Msg
+                               (queueId, Carrier, Lcode, Ccode, MID,
+	                            FlightSeq, FlightNo, MsgAddress, MsgVersion, MsgType,
+	                            subMsgType, MsgBody, SendDate, SendBy, ResendYN)
+                            SELECT iid ,A.Carrier ,Lcode ,Ccode ,MID
+                                  ,0 ,B.FlightNo ,SITAAddy ,NULL ,A.msgType
+                                  ,subMsgType ,'{1}' ,A.createdDate ,A.CreatedBy, ResendYN
+                            FROM EDI_Msg_Queue A
+                            JOIN AL_IRP B ON A.MID = B.idnum
+                            WHERE A.iid = {0}
+                    ";
+                strSql = string.Format(strSql, queueId, msgBody);
+            }
+            else
+            {
+                strSql = @" INSERT INTO EDI_Msg
+                               (queueId, Carrier, Lcode, Ccode, MID,
+	                            FlightSeq, FlightNo, MsgAddress, MsgVersion, MsgType,
+	                            subMsgType, MsgBody, SendDate, SendBy, ResendYN)
+                            SELECT iid ,A.Carrier ,Lcode ,Ccode ,MID
+	                              ,FlightSeq ,FlightNo ,msgAddress ,msgVersion ,A.msgType
+	                              ,subMsgType ,'{1}' ,A.createdDate ,A.CreatedBy, ResendYN
+                            FROM EDI_Msg_Queue A
+                            LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress 
+                                    FROM EDI_Address GROUP BY Carrier, MsgType) B ON A.msgType = B.msgType AND A.Carrier = B.Carrier 
+                            WHERE A.iid = {0}
+                        ";
+                strSql = string.Format(strSql, queueId, msgBody);
+            }
+
+            if (!strSql.Equals(string.Empty))
+            {
+                try { result = ExecCommand(strSql); }
+                catch (SqlException e) { result = -1; }
+            }
+
+            return result;
+        }
+     
+    }
+}

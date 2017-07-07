@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.Data;
+using System.Data;
+
+namespace ExpMQManager.DAL
+{
+    public class FfmDAC : BaseDAC
+    {
+        public List<FfmEntity> GetFFMColDAC(int mid, int flightSeq, string msgType, string subType)
+        {
+            string strSql = "";
+            strSql = @" SELECT A.MID ,A.Prefix ,A.AWB ,A.OriginCd fOrigin ,A.DestCd fDest
+	                          ,ISNULL(Partial, 'T') Partial ,OnPcs ,OnWeight ,Pcs ,Weight
+	                          ,C.OriginCd Origin ,C.DestCd Dest ,Leg_seq ,Commodity, ULD 
+	                          ,CASE SHC WHEN 'OTHER' THEN NULL ELSE SHC END SHC
+	                          ,CASE WHEN C.ChgWeight IS NOT NULL AND C.ChgWeight > 0.00 THEN C.ChgWeight
+									ELSE (SELECT ISNULL(SUM(VolWeight),0) FROM Exp_DimWt WHERE MID = A.MID) END volWeight 
+                        FROM Exp_FlightMaster A
+                        LEFT JOIN ( SELECT flightNo, Leg_seq, MAX(Acode) Acode
+			                        FROM flightTB A
+			                        JOIN flightTB_Leg B ON A.idnum = B.flightTB_id
+			                        WHERE flightNo = (SELECT FlightNo FROM Exp_FlightSeq WHERE FlightId = {0}) 
+			                        GROUP BY flightNo, Leg_Seq) B
+			                        ON A.flightNo = B.flightNo AND A.DestCd = B.Acode
+                        JOIN Exp_Master C ON A.MID = C.MID
+                        WHERE FlightSeq = {0} and A.[Status] = case when (A.[Status] & power(2, 3) > 0) then A.[Status] else -1 end 
+                        ORDER BY Leg_seq, Case ULD WHEN 'BULK' THEN '00BULK' ELSE ULD END ASC
+                    ";
+            strSql = string.Format(strSql, flightSeq);
+
+            return GetFFMfromReader(ExecuteReader(strSql));
+        }
+
+        protected List<FfmEntity> GetFFMfromReader(IDataReader reader)
+        {
+            List<FfmEntity> ffmEntityCol = new List<FfmEntity>();
+            while (reader.Read())
+            {
+                int mid = 0; try { mid = (int)reader["MID"]; } catch { }
+                int pcs = 0; try { pcs = (int)reader["pcs"]; } catch { }
+                double weight = 0.00; try { weight = Convert.ToDouble(reader["Weight"].ToString()); } catch (Exception e) { }
+                int fPcs = 0; try { fPcs = (int)reader["OnPcs"]; } catch { }
+                double fWeight = 0.00; try { fWeight = Convert.ToDouble(reader["OnWeight"].ToString()); } catch (Exception e) { }
+                double vWeight = 0.00; try { vWeight = Convert.ToDouble(reader["volWeight"].ToString()); } catch (Exception e) { }
+
+                int legSeq = 0; try { legSeq = (int)reader["Leg_seq"]; } catch { }
+
+                FfmEntity ffmEntity = new FfmEntity(
+                    mid,
+                    reader["prefix"].ToString().Trim(),
+                    reader["AWB"].ToString().Trim(),
+                    reader["Origin"].ToString().Trim(),
+                    reader["Dest"].ToString().Trim(),
+                    reader["fOrigin"].ToString().Trim(),
+                    reader["fDest"].ToString().Trim(),
+                    reader["Partial"].ToString().Trim(),
+                    pcs,
+                    weight,
+                    fPcs,
+                    fWeight,
+                    vWeight,
+                    legSeq,
+                    reader["Commodity"].ToString().Trim(),
+                    reader["SHC"].ToString().Trim(),
+                    reader["ULD"].ToString().Trim());
+
+                ffmEntityCol.Add(ffmEntity);
+
+            }
+
+            return ffmEntityCol;
+
+        }
+    }
+}

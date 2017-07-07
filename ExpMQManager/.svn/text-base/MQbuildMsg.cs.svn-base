@@ -1,0 +1,224 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using System.Windows.Forms;
+using System.IO;
+using ExpMQManager.BLL;
+
+namespace ExpMQManager
+{
+    public class MQbuildMsg
+    {
+        CASMqm myMQ = new CASMqm();
+        BaseDB baseDB = new BaseDB();
+
+        public void getQueueList(ListBox listbox)
+        {
+            int queueid = 0;
+            try
+            {
+                string strSql = @" SELECT iid, MsgType, subMsgType, MID, FlightSeq, ResendYN FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
+                DataTable dt = baseDB.GetSqlDataTable(strSql);
+                string msgReturn = "";
+                string result = "";
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    queueid = Convert.ToInt32(dr["iid"].ToString());
+                    string msgType = dr["MsgType"].ToString().Trim();
+                    string subType = dr["subMsgType"].ToString().Trim();
+                    int mid = 0;
+                    try { mid = Convert.ToInt32(dr["MID"].ToString().Trim()); } catch { }
+                    int flightSeq = 0;
+                    try { flightSeq = Convert.ToInt32(dr["FlightSeq"].ToString().Trim()); }  catch { }
+                    string resendYN = dr["ResendYN"].ToString().Trim();
+
+
+                    if (msgType != "")
+                    {
+                        GenerateBase baseMessage = null;
+
+                        if (msgType.ToUpper() == "FSU")
+                        {
+                            switch (subType.ToUpper())
+                            {
+                                case "DLV":
+                                    baseMessage = new GenerateDLV();
+                                    break;
+
+                                case "RCF":
+                                case "ARR":
+                                    baseMessage = new GenerateRCF();
+                                    break;
+
+                                case "NFD":
+                                case "AWD":
+                                    baseMessage = new GenerateAWD();
+                                    break;
+
+                                case "MAN":
+                                case "DEP":
+                                    baseMessage = new GenerateMAN();
+                                    break;
+
+                                case "RCS":
+                                    baseMessage = new GenerateRCS();
+                                    break;
+                            }
+                        }
+
+                        if (msgType.ToUpper() == "FFM")
+                            baseMessage = new GenerateFFM();
+
+                        if (msgType.ToUpper() == "IRP")
+                            baseMessage = new GenerateIRP();
+
+                        if (msgType.ToUpper() == "FWB")
+                            baseMessage = new GenerateFWB();
+
+                        if (baseMessage != null)
+                        {
+                            //Clear Static Variables
+                            baseMessage.msgDestAddrEmail = "";
+
+                            msgReturn = baseMessage.doBuildUp(msgType, subType, mid, flightSeq, queueid);
+                            if (msgReturn != "")
+                            {
+                                msgReturn = msgReturn.ToUpper();
+                                string[] arrMsg = msgReturn.Split('|');
+
+                                foreach (string msg in arrMsg)
+                                {
+                                    result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR1MQNMRInfo, MQ_ManagerExp.QUEUEID1, MQ_ManagerExp.GR1MQCONInfo, MQ_ManagerExp.GR1MQMInfo);
+                                    if (result.IndexOf("successful") > 0)
+                                    {
+                                        baseMessage.UpdateQueue(queueid, "S", "");
+                                        baseMessage.InsertLog(queueid, msg, msgType);
+
+                                        if (listbox.Items.Count >= 100)
+                                            listbox.Items.Clear();
+                                        listbox.Items.Add(msg);
+
+                                        //Create Copy to Cargo-Spot Queue
+                                        if (msgType == "FFM" || msgType == "FWB" || (msgType == "FSU" && subType == "DEP") || (msgType == "FSU" && subType == "MAN"))
+                                            result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR2MQNMRInfo, MQ_ManagerExp.QUEUEID2, MQ_ManagerExp.GR2MQCONInfo, MQ_ManagerExp.GR2MQMInfo);
+                                    }
+                                    else
+                                        listbox.Items.Add("Error: " + queueid + "-" + result);
+
+                                    if (baseMessage.msgDestAddrEmail != "")
+                                    {
+                                        string emailBody = msgReturn.Replace("\r\n", "<br>");
+                                        string emailSubj = "[Cargo Airport Services LLC]: Cargo-IMP Message Forward";
+                                        bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj);
+                                    }
+                                }
+                            }
+
+                            //Clear Static Variables
+                            baseMessage.msgDestAddrEmail = "";
+
+                        }
+
+                        //Email Sending 
+                        if (msgType.ToUpper() == "EMAIL")
+                        {
+                            GenerateEmail email = new GenerateEmail();
+                            int emailResult;
+                            int emailStatus = 1;
+                            try
+                            {
+                                emailResult = email.sendEamil(mid);
+                                if (emailResult == 0)
+                                {
+                                    if (resendYN.ToUpper() == "Y")
+                                        emailStatus = 3;
+                                    email.UpdateQueue(queueid, "S", "");
+                                    email.UpdateEmailQueue(mid, emailStatus);
+
+                                    if (listbox.Items.Count >= 100)
+                                        listbox.Items.Clear();
+                                    listbox.Items.Add(string.Format("Email QueueId:{0} is successfully sent!", mid));
+                                }
+                                else
+                                {
+                                    email.UpdateQueue(queueid, "E", "Error sending email!");
+                                    emailStatus = 255;
+                                    email.UpdateEmailQueue(mid, emailStatus);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                email.UpdateQueue(queueid, "E", e.Message);
+                                emailStatus = 255;
+                                email.UpdateEmailQueue(mid, emailStatus);
+                                buildLog(queueid, e.Message, e.StackTrace);
+                            }
+                        }
+
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                GenerateBase baseMessage = new GenerateDLV();
+                baseMessage.UpdateQueue(queueid, "E", e.Message);
+                buildLog(queueid, e.Message, e.StackTrace);
+            }
+
+        }
+
+        public static int buildLog(int queueId, string errorMsg, string errorDetail)
+        {
+            string logmsg = "";
+            logmsg += "\t Queue ID: " + queueId + "\r\n";
+            logmsg += "\t Error msg: " + errorMsg + "\r\n";
+            logmsg += "\t Error Detail: " + errorDetail + "\r\n";
+            logmsg += "===================================================================================================";
+            //Logging to Logger
+            try
+            { int aa = Logger(logmsg); }
+            catch (IOException ex)
+            { return 1; }
+
+            //Send Notification Email to Admin
+            try { baseMail.mailSend("EpicError@casusa.com", logmsg.Replace("\r\n","<br>"), "ExpMQManager - Error Notification"); }
+            catch (Exception e) { }
+
+            return 0;
+        }
+
+        static int Logger(string log)
+        {
+            string nowDate = DateTime.Now.ToString("yyyyMMdd");
+            string nowTime = DateTime.Now.ToString("HH':'mm':'ss");
+            string fileName = "MQEngineEXP_" + nowDate + ".txt";
+            string filePath = @"C:\temp\log\" + fileName;
+            try
+            {
+                if (!File.Exists(filePath))
+                {
+                    StreamWriter sw = File.CreateText(filePath);
+                    sw.Close();
+                }
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    log = nowDate + " " + nowTime + " " + log;
+                    sw.WriteLine(log);
+                    sw.Close();
+                }
+            }
+            catch (IOException ex)
+            {
+                throw ex;
+            }
+            return 0;
+        }
+
+
+
+    }
+}

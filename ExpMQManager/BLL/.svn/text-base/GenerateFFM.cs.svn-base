@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExpMQManager.DAL;
+using ExpMQManager.Data;
+
+namespace ExpMQManager.BLL
+{
+    public class GenerateFFM : GenerateBase
+    {
+        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        {
+            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            List<FfmEntity> ffmEntityCol = new FfmDAC().GetFFMColDAC(mid, flightSeq, msgType, subType);
+            return buildUpFFM(baseEntity, ffmEntityCol, msgType, subType);
+        }
+
+        public string buildUpFFM(BaseEntity baseEntity, List<FfmEntity> ffmEntityCol, string msgType, string subType)
+        {
+            //If no AWB Found
+            if (ffmEntityCol.Count == 0)
+                return "";
+
+            string strAWB = "";
+
+            int messageLimit = 20;
+            int msgSeq = 1;
+            int idx = 1;
+            char seperator = '|';
+            string prevULD = "";
+            string portOfUnloading = "";
+
+            string fltDate = baseEntity.flightDate.ToString("dd") + transMonth(baseEntity.flightDate.ToString("MM"));
+
+
+            foreach (FfmEntity msgEntity in ffmEntityCol)
+            {
+                //Print Message Header
+                if (idx == 1 || ((idx-1) % messageLimit == 0))
+                {
+                    strAWB += base.buildUpBase(baseEntity, msgType, subType);
+                    strAWB += msgSeq + "/" + baseEntity.flightNo + "/" + fltDate + "/" + baseEntity.origin + "\r\n";
+                }
+
+                //Print Port of Unloading
+                if (portOfUnloading != msgEntity.fDest.ToUpper())
+                {
+                    portOfUnloading = msgEntity.fDest.ToUpper();
+                    strAWB += portOfUnloading + "\r\n";
+                }
+
+                //Print ULD
+                if (msgEntity.uld.ToUpper() != "BULK")
+                {
+                    if (prevULD != msgEntity.uld.ToUpper())
+                    {
+                        strAWB += "ULD" + "/" + msgEntity.uld.ToUpper() + "\r\n";
+                        prevULD = msgEntity.uld.ToUpper();
+                    }
+                }
+
+
+                //Print AWB Consignment
+                strAWB += msgEntity.prefix + "-" + msgEntity.awb + msgEntity.origin + msgEntity.dest + "/";
+                strAWB += msgEntity.shipmentIndicator + msgEntity.fPcs + "K" + msgEntity.fWeight;
+
+                //Print Volume Detail
+                strAWB += "MC";
+                if (msgEntity.shipmentIndicator.ToUpper() == "T")
+                    strAWB += string.Format("{0:0.0}", msgEntity.volWeight);
+                else
+                {
+                    double volWeight = 0.00;
+                    try { volWeight = ((msgEntity.volWeight / msgEntity.pcs) * msgEntity.fPcs); }
+                    catch { }
+                    strAWB += string.Format("{0:0.00}", volWeight);
+                }
+                //Print Total Consignmnet Pieces
+                if (msgEntity.shipmentIndicator.ToUpper() != "T")
+                    strAWB += "T" + msgEntity.pcs;
+
+                //Print Commodity
+                strAWB += "/" + truncateString(msgEntity.commodity, 15).ToUpper();
+
+
+                //print SHC Code
+                if (msgEntity.shc != "")
+                    strAWB += "/" + truncateString(msgEntity.shc, 6);
+
+                strAWB += "\r\n";
+
+                //Print Message Tailer
+                if (idx == ffmEntityCol.Count)
+                {
+                    strAWB += "LAST\r\n";
+                    break;
+                }
+                else if (idx % messageLimit == 0)
+                {
+                    strAWB += "CONT\r\n";
+                    strAWB += seperator;
+                    portOfUnloading = "";
+                    prevULD = "";
+                    msgSeq++;
+                }
+                idx++;
+            }
+
+            return strAWB;
+        }
+    }
+}
