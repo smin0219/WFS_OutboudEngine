@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateRCF : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            RcfEntity rcfEntity = new RcfDAC().GetRCFInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            RcfEntity rcfEntity = new RcfDAC().GetRCFInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpRCF(rcfEntity, msgType, subType);
         }
 
@@ -102,12 +102,27 @@ namespace ExpMQManager.BLL
             }
             catch { }
 
-           
-
             string weightFormatted = string.Format("{0:0.0}", msgEntity.weightRCF);
             char shipmentCode = replaceShipmentIndicator(msgEntity.shipmentIndicatorRCF[0]);
 
+            // added for Realtime RCF. 2018-1-11
+            if (subType.ToUpper() == "RTF")
+            {
+                subType = "RCF";
+                if (msgEntity.pcs != msgEntity.pcsRCF)
+                    shipmentCode = 'P';
 
+                double tempWeight = 0;
+                try
+                {
+                    tempWeight = msgEntity.weight / msgEntity.pcs;
+                }
+                catch
+                {
+                    throw new Exception("RTF: Cannot calculate piece per weight: " + msgEntity.queueId);
+                }
+                weightFormatted = string.Format("{0:0.0}", (tempWeight * msgEntity.pcsRCF));
+            }
 
             strAWB += subType.ToUpper() + "/" + msgEntity.flightNo + "/" + rcfTime + "/" + msgEntity.destFlight + "/" +
                 shipmentCode + msgEntity.pcsRCF + "K" + weightFormatted + "\r\n";

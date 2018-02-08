@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateRCT : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            RctEntity dlvEntity = new RctDAC().GetRCTInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            RctEntity dlvEntity = new RctDAC().GetRCTInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpRCT(dlvEntity, msgType, subType);
         }
 

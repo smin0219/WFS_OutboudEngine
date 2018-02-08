@@ -87,6 +87,8 @@
   <ItemGroup>
     <Compile Include="BaseDB.cs" />
     <Compile Include="baseMail.cs" />
+    <Compile Include="BLL\GenerateDIS.cs" />
+    <Compile Include="DAL\DisDAC.cs" />
     <Compile Include="DAL\FohDAC.cs" />
     <Compile Include="BLL\GenerateFHL.cs" />
     <Compile Include="BLL\GenerateFBR.cs" />
@@ -125,6 +127,7 @@
     <Compile Include="DAL\UwsDAC.cs" />
     <Compile Include="Data\AwdEntity.cs" />
     <Compile Include="Data\BaseEntity.cs" />
+    <Compile Include="Data\DisEntity.cs" />
     <Compile Include="Data\FfmSHCEntity.cs" />
     <Compile Include="Data\FhlOCIEntity.cs" />
     <Compile Include="Data\FhlHTSEntity.cs" />

@@ -20,6 +20,7 @@ namespace ExpMQManager.Data
             string __preChargeOtherCd, double __carriageVal, double __customVal, double __insuranceVal, string __awbPlace, string __SHC) //, string[] __CountryCode, string[] __InfoId, string[] __CustomsId, string[] __CustomsInfo)
         {
             this.queueId = baseEntity.queueId;
+            this.Ccode = baseEntity.Ccode;
             this.msgType = baseEntity.msgType;
             this.msgDestAddr = baseEntity.msgDestAddr;
             this.msgVersion = baseEntity.msgVersion;

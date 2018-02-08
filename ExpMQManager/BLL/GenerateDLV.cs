@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateDLV : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            DlvEntity dlvEntity = new DlvDAC().GetDLVInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            DlvEntity dlvEntity = new DlvDAC().GetDLVInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             if (dlvEntity.pcsDLV == 0)
                 throw new Exception("DLV PCs is zero. QueueID: " + dlvEntity.queueId);
 

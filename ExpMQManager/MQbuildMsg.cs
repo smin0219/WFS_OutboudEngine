@@ -28,9 +28,12 @@ namespace ExpMQManager
                 string strSql = "";
                if (isLive)
                 {
-                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId FROM EDI_Msg_Queue WHERE iid = 4326345";
                     //strSql = @" select * from EDI_Msg_Queue where iid in (9733306)";
+
+                    //strSql = @" select * from EDI_Msg_Queue where iid in (14397617)";
+
                 }
                 else
                 {
@@ -42,8 +45,10 @@ namespace ExpMQManager
                     //            from EDI_Msg_Queue where iid in (6578241)
 
                     //            ";
-                    strSql = @" select * from EDI_Msg_Queue where iid in (12387780)";
-                    //4342600
+
+                    strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
+
+                    //strSql = @" select * from EDI_Msg_Queue where iid in (4344489)";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype = 'Email' and submsgtype = 'TTN' order by iid desc";
 
@@ -66,6 +71,9 @@ namespace ExpMQManager
                     catch { }
                     int hid = 0;
                     try { hid = Convert.ToInt32(dr["HID"].ToString().Trim()); }
+                    catch { }
+                    int refID = 0;
+                    try { refID = Convert.ToInt32(dr["refID"].ToString().Trim()); }
                     catch { }
                     int flightSeq = 0;
                     try { flightSeq = Convert.ToInt32(dr["FlightSeq"].ToString().Trim()); }
@@ -103,8 +111,14 @@ namespace ExpMQManager
                                         break;
 
                                     case "RCF":
+                                    case "RTF": // added for realtime RCF. 2018-1-11
                                     case "ARR":
                                         baseMessage = new GenerateRCF();
+                                        break;
+
+                                    // added for realtime RCF. 2018-1-11
+                                    case "DIS":
+                                        baseMessage = new GenerateDIS();
                                         break;
 
                                     case "NFD":
@@ -196,11 +210,11 @@ namespace ExpMQManager
                             {
                                 if (msgType.ToUpper() == "FHL")
                                 {
-                                    msgReturn = baseMessage.doBuildUp(msgType, subType, hid, flightSeq, queueid);
+                                    msgReturn = baseMessage.doBuildUp(msgType, subType, hid, refID, flightSeq, queueid);
                                 }
                                 else
                                 {
-                                    msgReturn = baseMessage.doBuildUp(msgType, subType, mid, flightSeq, queueid);
+                                    msgReturn = baseMessage.doBuildUp(msgType, subType, mid, refID, flightSeq, queueid);
                                 }
                             }
 
@@ -251,7 +265,7 @@ namespace ExpMQManager
                                         }
                                         else
                                         {
-                                            //baseMessage.UpdateQueue(queueid, "S", "");
+                                            baseMessage.UpdateQueue(queueid, "S", "");
                                             //added. 2015-12-14
                                             if (MsgBody_SITA != null && MsgBody_SITA != string.Empty)
                                             {
@@ -281,7 +295,6 @@ namespace ExpMQManager
                                                 else
                                                 {
                                                 }
-
                                             }
                                         }
                                     }
@@ -292,7 +305,25 @@ namespace ExpMQManager
                                         buildLog(queueid, result, "CASMqm.WriteLocalQMsg");
                                     }
 
-                                    //baseMessage.msgDestAddrEmail = "";
+
+                                    // added on 2017-11-20. requested by Mike(2017-11-20 03:04pm)
+                                    if(isLive)
+                                    {
+                                        // changed on 2017-11-30. all SITA message. requested by Cecile(2017-11-30 12:40pm)
+                                        //if(msgType == "FWB" || msgType == "FHL" || msgType == "FHL")
+                                        if (msgReturn != "")
+                                        {
+                                            if(baseMessage.msgDestAddrEmail != null && baseMessage.msgDestAddrEmail != "")
+                                            {
+                                                baseMessage.msgDestAddrEmail += ";nacs.wfs@cargoquality.com";
+                                            }
+                                            else
+                                            {
+                                                baseMessage.msgDestAddrEmail = "nacs.wfs@cargoquality.com";
+                                            }
+                                        }
+                                    }
+
                                     if (baseMessage.msgDestAddrEmail != "")
                                     {
                                         string emailBody = "";
@@ -370,6 +401,12 @@ namespace ExpMQManager
                                 if (listbox.Items.Count >= 100)
                                     listbox.Items.Clear();
                                 listbox.Items.Add(string.Format("Email QueueId:{0} is successfully sent!", mid));
+                            }
+                            else if(emailResult == -2)
+                            {
+                                email.UpdateQueue(queueid, "E", "No receiver email address.");
+                                emailStatus = 255;
+                                email.UpdateEmailQueue(mid, emailStatus);
                             }
                             else
                             {

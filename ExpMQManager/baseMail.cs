@@ -26,7 +26,7 @@ namespace ExpMQManager
         {
             try
             {
-                string _serverIP= "";
+                string _serverIP = "";
                 int _serverPort = 25;
                 string _emailSender = "";
 
@@ -66,7 +66,7 @@ namespace ExpMQManager
                         for (int i = 0; i < result.Length; i++)
                         {
                             msAddress = result[i].ToString();
-                            if(msAddress != null && msAddress != string.Empty)
+                            if (msAddress != null && msAddress != string.Empty)
                                 m.To.Add(new MailAddress(msAddress));
                         }
                     }
@@ -88,7 +88,7 @@ namespace ExpMQManager
 
                 m.Subject = Subject;
                 m.Body = Msg;
-                if(needHTMLFormat)
+                if (needHTMLFormat)
                 {
                     m.IsBodyHtml = true;
                 }
@@ -96,9 +96,11 @@ namespace ExpMQManager
                 {
                     m.IsBodyHtml = false;
                 }
+
                 smtp.Send(m);
-                //smtp.SendAsync(m,"CASUSA");
                 return true;
+
+                //smtp.SendAsync(m,"CASUSA");
             }
             catch (Exception ex)
             {

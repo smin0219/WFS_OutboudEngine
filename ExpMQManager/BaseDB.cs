@@ -177,7 +177,7 @@ namespace ExpMQManager
                 //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=casnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
                 //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=testcasnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
                 //connectionString = "Data Source=IO3003DBT1;Initial Catalog=casnet;User ID=OutboundEngine;Password=outengine2015;MultipleActiveResultSets=True";
-                connectionString = "Data Source=IO3003DBT1;Initial Catalog=testcasnet;User ID=OutboundEngine;Password=outengine2015;MultipleActiveResultSets=True";
+                connectionString = "Data Source=IO3003DBTDEV;Initial Catalog=testcasnet;User ID=testepic;Password=epic2017;MultipleActiveResultSets=True";
 
             }
 

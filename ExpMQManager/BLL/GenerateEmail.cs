@@ -9,7 +9,7 @@ namespace ExpMQManager.BLL
 {
     public class GenerateEmail : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
             //Do nothing
             return string.Empty;
@@ -17,14 +17,24 @@ namespace ExpMQManager.BLL
 
         public int sendEamil(int mailQueueId, string subType)
         {
+            GenerateEmail email = new GenerateEmail();
+
             string receiverAddr = "";
             EmailEntity emailEntity = new EmailDAC().GetEmailInfoDAC(mailQueueId);
 
-            foreach(string receiver in emailEntity.receiver)
+            if (emailEntity.receiver != null && emailEntity.receiver.Count() > 0)
             {
-                if (receiverAddr != "")
-                    receiverAddr += ";";
-                receiverAddr += receiver;
+
+                foreach (string receiver in emailEntity.receiver)
+                {
+                    if (receiverAddr != "")
+                        receiverAddr += ";";
+                    receiverAddr += receiver;
+                }
+            }
+            else
+            {
+                return -2;
             }
 
             // change mail format HTML => Plain text

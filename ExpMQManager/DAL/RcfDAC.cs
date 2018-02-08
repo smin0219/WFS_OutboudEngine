@@ -9,9 +9,9 @@ namespace ExpMQManager.DAL
 {
     public class RcfDAC : BaseDAC
     {
-        public RcfEntity GetRCFInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public RcfEntity GetRCFInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
             string arrColumnName = "";
@@ -24,28 +24,133 @@ namespace ExpMQManager.DAL
             //        WHERE a.MID = {0} AND FlightSeq = {1}
             //        GROUP BY a.MID ";
 
-            strSql = @" 
- SELECT
-    MIN(a.FlightNo) FlightNo
-    , SUM(OnPcs) Pcs
-    , SUM(OnWeight) Weight
-    , MIN(Partial) Partial
-    , (SELECT TOP 1 {2} FROM imp_FlightStats WHERE FlightSeq = {1} and Ccode = (select ccode from EDI_Msg_Queue where iid = {3}) ) arrDate
-    , MIN(a.FlightDate) arrFlightMasterDate
-FROM ePic_FlightMaster as a
+            // changed. Realtime RCF. 2018-1-11
+            //strSql = @" 
+            //             SELECT
+            //                MIN(a.FlightNo) FlightNo
+            //                , SUM(OnPcs) Pcs
+            //                , SUM(OnWeight) Weight
+            //                , MIN(Partial) Partial
+            //                , (SELECT TOP 1 {2} FROM imp_FlightStats WHERE FlightSeq = {1} and Ccode = (select ccode from EDI_Msg_Queue where iid = {3}) ) arrDate
+            //                , MIN(a.FlightDate) arrFlightMasterDate
+            //            FROM ePic_FlightMaster as a
 
-WHERE a.MID = {0} AND a.FlightSeq = {1}
+            //            WHERE a.MID = {0} AND a.FlightSeq = {1}
 
-GROUP BY a.MID
-";
+            //            GROUP BY a.MID
+            //            ";
 
-            if (subType.ToUpper() == "RCF")
-                arrColumnName = "ArrCargoDate";
+            //if (subType.ToUpper() == "RCF")
+            //    arrColumnName = "ArrCargoDate";
 
-            if (subType.ToUpper() == "ARR")
-                arrColumnName = "ArrFltDate";
+            //if (subType.ToUpper() == "ARR")
+            //    arrColumnName = "ArrFltDate";
 
-            strSql = string.Format(strSql, mid, flightSeq, arrColumnName, queueId);
+            //strSql = string.Format(strSql, mid, flightSeq, arrColumnName, queueId);
+
+            if (subType.ToUpper() == "RCF" || subType.ToUpper() == "ARR")
+            {
+                strSql = @" 
+                         SELECT
+                            MIN(a.FlightNo) FlightNo
+                            , SUM(OnPcs) Pcs
+                            , SUM(OnWeight) Weight
+                            , MIN(Partial) Partial
+                            , (SELECT TOP 1 {2} FROM imp_FlightStats WHERE FlightSeq = {1} and Ccode = (select ccode from EDI_Msg_Queue where iid = {3}) ) arrDate
+                            , MIN(a.FlightDate) arrFlightMasterDate
+                        FROM ePic_FlightMaster as a
+
+                        WHERE a.MID = {0} AND a.FlightSeq = {1}
+
+                        GROUP BY a.MID";
+
+                if (subType.ToUpper() == "RCF")
+                    arrColumnName = "ArrCargoDate";
+
+                if (subType.ToUpper() == "ARR")
+                    arrColumnName = "ArrFltDate";
+
+                strSql = string.Format(strSql, mid, flightSeq, arrColumnName, queueId);
+            }
+            else
+            {
+                // subtype = "RTF"
+                if(mid != 0)
+                {
+                    if (refID != 0)
+                    {
+                        strSql = @"
+                        DECLARE @queueID INT = {0}
+                        DECLARE @FlightSeq INT = {1}
+                        DECLARE @MID INT = {2}
+                        DECLARE @RefID INT = {3}
+                        DECLARE @tZone INT = (SELECT TOP 1 ISNULL(tzone, 0) FROM [Location] WHERE Lcode = (SELECT Lcode FROM EDI_MSG_Queue WHERE iid = @queueID))
+
+						SELECT EDIMQ.FlightNo as FlightNo
+                            ,RCFBCL.RCF_PCS as Pcs
+                            , RCFBCL.[Weight] as [Weight]
+                            , ePicFM.[Partial] as [Partial]
+                            , DATEADD(HOUR, @tZone, EDIMQ.CreatedDate) as arrDate
+                            , ePicFM.FlightDate as arrFlightMasterDate
+                        FROM (SELECT iid, Carrier, Lcode, Ccode, MID, RefID, FlightSeq, FlightNo, CreatedDate FROM EDI_MSG_Queue WHERE iid = @queueID ) as EDIMQ
+                        JOIN (SELECT idnum, FlightSeq, MID, [Weight], RCF_PCS FROM RCF_BCLItem WHERE idnum = @RefID) as RCFBCL
+                        ON EDIMQ.RefID = RCFBCL.idnum
+                        JOIN (SELECT TOP 1 MID, FlightSeq, MIN(FlightDate) as FlightDate, MIN([Partial]) as [Partial] FROM ePic_FlightMaster Where MID = @MID AND FlightSeq = @FlightSeq GROUP BY MID, FlightSeq) as ePicFM
+                        ON EDIMQ.MID = ePicFM.MID AND EDIMQ.FlightSeq = ePicFM.FlightSeq";
+
+                        strSql = string.Format(strSql, queueId, flightSeq, mid, refID);
+                    }
+                    else
+                    {
+                        strSql = @"
+                        DECLARE @queueID INT = {0}
+                        DECLARE @FlightSeq INT = {1}
+                        DECLARE @MID INT = {2}
+                        DECLARE @tZone INT = (SELECT TOP 1 ISNULL(tzone, 0) FROM [Location] WHERE Lcode = (SELECT Lcode FROM EDI_MSG_Queue WHERE iid = @queueID))
+
+						SELECT EDIMQ.FlightNo as FlightNo
+                            --, RCFBCL.RCF_PCS as Pcs
+                            --, RCFBCL.[Weight] as [Weight]
+                            , ePicFM.Pcs as Pcs
+                            , ePicFM.[Weight] as [Weight]
+                            , ePicFM.[Partial] as [Partial]
+                            , DATEADD(HOUR, @tZone, EDIMQ.CreatedDate) as arrDate
+                            , ePicFM.FlightDate as arrFlightMasterDate
+                        FROM (SELECT iid, Carrier, Lcode, Ccode, MID, FlightSeq, FlightNo, CreatedDate FROM EDI_MSG_Queue WHERE iid = @queueID ) as EDIMQ
+                        JOIN (SELECT TOP 1 MID, SUM(OnPcs) Pcs, SUM(OnWeight) [Weight], FlightSeq, MIN(FlightDate) as FlightDate, MIN([Partial]) as [Partial] FROM ePic_FlightMaster Where MID = @MID AND FlightSeq = @FlightSeq GROUP BY MID, FlightSeq) as ePicFM
+                        ON EDIMQ.MID = ePicFM.MID AND EDIMQ.FlightSeq = ePicFM.FlightSeq";
+
+                        strSql = string.Format(strSql, queueId, flightSeq, mid);
+                    }
+                }
+                else
+                {
+                    strSql = @"
+                        DECLARE @queueID INT = {0}
+                        DECLARE @FlightSeq INT = {1}
+                        DECLARE @MID INT = {2}
+                        DECLARE @RefID INT = {3}
+                        DECLARE @tZone INT = (SELECT TOP 1 ISNULL(tzone, 0) FROM [Location] WHERE Lcode = (SELECT Lcode FROM EDI_MSG_Queue WHERE iid = @queueID))
+
+						SELECT EDIMQ.FlightNo as FlightNo
+                            ,RCFBCL.RCF_PCS as Pcs
+                            , RCFBCL.[Weight] as [Weight]
+                            , (CASE WHEN RCFBCL.ManPcs =  RCFBCL.LocPcs THEN 'T' ELSE 'P' END) as Partial
+                            , DATEADD(HOUR, @tZone, EDIMQ.CreatedDate) as arrDate
+                            , ePicFM.FlightDate as arrFlightMasterDate
+                        FROM (SELECT iid, Carrier, Lcode, Ccode, MID, RefID, FlightSeq, FlightNo, CreatedDate FROM EDI_MSG_Queue WHERE iid = @queueID ) as EDIMQ
+                        JOIN RCF_BCLItem as RCFBCL
+                        ON EDIMQ.RefID = RCFBCL.idnum
+                        JOIN (SELECT TOP 1 FlightSeq, MIN(FlightDate) as FlightDate FROM ePic_FlightMaster Where FlightSeq = @FlightSeq GROUP BY FlightSeq) as ePicFM
+                        ON EDIMQ.FlightSeq = ePicFM.FlightSeq";
+
+                    strSql = string.Format(strSql, queueId, flightSeq, mid, refID);
+                }
+                
+
+
+                strSql = string.Format(strSql, queueId, flightSeq, mid);
+            }
 
             return GetRCFfromReader(baseAWB, ExecuteReader(strSql));
         }

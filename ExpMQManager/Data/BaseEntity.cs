@@ -90,11 +90,12 @@ namespace ExpMQManager.Data
         }
 
         //Constructor for FWB Message
-        public BaseEntity(int __queueId, string __msgType, string __msgDestAddr, int __msgVersion,
+        public BaseEntity(int __queueId, string __Ccode, string __msgType, string __msgDestAddr, int __msgVersion,
             int __mid, DateTime __createdDate, string __createdBy, string __prefix, string __awb,
             string __origin, string __dest, string __destFlight, int __pcs, double __weight, string __carrier) 
         {
             this.queueId = __queueId;
+            this.Ccode = __Ccode;
             this.msgType = __msgType;
             this.msgDestAddr = __msgDestAddr;
             this.msgVersion = __msgVersion;
@@ -162,6 +163,13 @@ namespace ExpMQManager.Data
         {
             get { return _mid; }
             set { _mid = value; }
+        }
+        private int _refID = 0;
+
+        public int refID
+        {
+            get { return _refID; }
+            set { _refID = value; }
         }
 
         private int _flightSeq = 0;

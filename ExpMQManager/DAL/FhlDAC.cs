@@ -9,9 +9,9 @@ namespace ExpMQManager.DAL
 {
     public class FhlDAC : BaseDAC
     {
-        public FhlEntity GetFHLInfoDAC(int hid, int flightSeq, string msgType, string subType, int queueId)
+        public FhlEntity GetFHLInfoDAC(int hid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(hid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(hid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
             strSql = @"  SELECT hid , hawb, Pcs as HPcs, SLAC, Weight as HWeight, Dest as HDest, Origin as HOrigin, Commodity, Shipper ,ShpAddr ,ShpAddr2 ,ShpAddrCity

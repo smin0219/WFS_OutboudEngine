@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateFWB : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            FwbEntity fwbEntity = new FwbDAC().GetFWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            FwbEntity fwbEntity = new FwbDAC().GetFWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
 
             return buildUpFWB(fwbEntity, msgType, subType);
@@ -22,7 +22,6 @@ namespace ExpMQManager.BLL
 
             //TIMEZONE UPDATE TEST ==> HOLD!!!
             //int timezone = getEXPTimezone(msgEntity.mid, null);
-
 
             string strAWB = "";
 
@@ -36,7 +35,14 @@ namespace ExpMQManager.BLL
             char shipmentCode = replaceShipmentIndicator(msgEntity.shipmentIndicator[0]);
 
             //RTG 
-            strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier + "\r\n";
+
+            // added. if Exp_Master.AWBPOU <> Exp_Master.Dest then add RTG. requested by Cecile 2017-12-13 10:46AM
+
+            //strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier + "\r\n";    // original.
+            strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier;
+            if (msgEntity.carrier == "BA" && msgEntity.destFlight != msgEntity.dest)
+                strAWB += "/" + msgEntity.dest + msgEntity.carrier;
+            strAWB += "\r\n";
 
             //SHP
             strAWB += "SHP" + "\r\n";
@@ -102,7 +108,6 @@ namespace ExpMQManager.BLL
                 }
             }
 
-
             //CVD
             strAWB += "CVD" + "/" + msgEntity.currency + "/" + msgEntity.chargeCd + "/";
             strAWB += msgEntity.preChargeWeightCd + msgEntity.preChargeOtherCd + "/";
@@ -121,8 +126,6 @@ namespace ExpMQManager.BLL
                 strAWB += "XXX" + "\r\n";
             else
                 strAWB += string.Format("{0:0.00}", msgEntity.insuranceVal) + "\r\n";
-            
-
 
 
             int index = 1;
@@ -200,79 +203,86 @@ namespace ExpMQManager.BLL
                 #endregion
             }
 
-            // 2016-3-18. added. 
-            int cnt_volWeight = msgEntity.colVol.Where(x => x.volWeight > 0).Count();
-            if (msgEntity.colVol.Count + (ngIndex -1) + cnt_volWeight > 12)
+            // IF Turkish, NO DIM info. requested by Cecile on 2018-1-8. ==> HOLD.
+            //if(msgEntity.Ccode != "TURKJFK" && msgEntity.Ccode != "X TURKIAH" && msgEntity.Ccode != "WFSTKIAD")
+            if(msgEntity.Ccode != "X TURKIAH")
             {
-                strAWB += "/2/ND//NDA" + "\r\n";
-            }
-            else
-            {
-                index = ngIndex;
-                foreach (FwbVolumeEntity fwbVolEntity in msgEntity.colVol)
+                // 2016-3-18. added. 
+                int cnt_volWeight = msgEntity.colVol.Where(x => x.volWeight > 0).Count();
+                if (msgEntity.colVol.Count + (ngIndex - 1) + cnt_volWeight > 12)
                 {
-                    if (index <= 12)
+                    strAWB += "/2/ND//NDA" + "\r\n";
+                }
+                else
+                {
+                    index = ngIndex;
+                    foreach (FwbVolumeEntity fwbVolEntity in msgEntity.colVol)
                     {
-                        strAWB += "/" + index++ + "/" + "ND" + "/";
-
-                        if (fwbVolEntity.pcsWeight > 0)
+                        if (index <= 12)
                         {
-                            //2015-09-15 BA&IB and others. also, decimal 1 (not 2)
-                            if (msgEntity.carrier == "BA" || msgEntity.carrier == "IB")
+                            strAWB += "/" + index++ + "/" + "ND" + "/";
+
+                            if (fwbVolEntity.pcsWeight > 0)
                             {
-                                strAWB += "K" + Math.Round(fwbVolEntity.pcsWeight);
+                                //2015-09-15 BA&IB and others. also, decimal 1 (not 2)
+                                if (msgEntity.carrier == "BA" || msgEntity.carrier == "IB")
+                                {
+                                    strAWB += "K" + Math.Round(fwbVolEntity.pcsWeight);
+                                }
+                                else
+                                {
+                                    strAWB += "K" + string.Format("{0:0.0}", fwbVolEntity.pcsWeight);
+                                }
                             }
                             else
                             {
-                                strAWB += "K" + string.Format("{0:0.0}", fwbVolEntity.pcsWeight);
+                                strAWB += "";
                             }
-                        }
-                        else
-                        {
-                            strAWB += "";
-                        }
-                        strAWB += "/";
+                            strAWB += "/";
 
-                        if (fwbVolEntity.length > 0 && fwbVolEntity.width > 0 && fwbVolEntity.height > 0)
-                            strAWB += fwbVolEntity.unitCode + Math.Round(fwbVolEntity.length) + "-" + Math.Round(fwbVolEntity.width) + "-" + Math.Round(fwbVolEntity.height) + "/" + fwbVolEntity.pcsDim;
-                        else
-                        {
-                            if (msgEntity.msgVersion == 9)
-                            {
-                                strAWB += "CMT0-0-0/" + msgEntity.pcs;
-                            }
+                            if (fwbVolEntity.length > 0 && fwbVolEntity.width > 0 && fwbVolEntity.height > 0)
+                                strAWB += fwbVolEntity.unitCode + Math.Round(fwbVolEntity.length) + "-" + Math.Round(fwbVolEntity.width) + "-" + Math.Round(fwbVolEntity.height) + "/" + fwbVolEntity.pcsDim;
                             else
                             {
-                                strAWB += "NDA";
+                                if (msgEntity.msgVersion == 9)
+                                {
+                                    strAWB += "CMT0-0-0/" + msgEntity.pcs;
+                                }
+                                else
+                                {
+                                    strAWB += "NDA";
+                                }
                             }
-                        }
 
-                        strAWB += "\r\n";
+                            strAWB += "\r\n";
 
-                        if (fwbVolEntity.volWeight > 0 && index <= 12)
-                        {
-                            strAWB += "/" + index++ + "/" + "NV" + "/";
-
-                            // Always MC. 2016-05-18
-                            strAWB += "MC";
-                            if (fwbVolEntity.unitCode == "INH")
+                            if (fwbVolEntity.volWeight > 0 && index <= 12)
                             {
-                                strAWB += string.Format("{0:0.00}", (fwbVolEntity.volWeight / 166)) + "\r\n";
-                            }
-                            else
-                            {
-                                strAWB += string.Format("{0:0.00}", fwbVolEntity.volWeight) + "\r\n";
+                                strAWB += "/" + index++ + "/" + "NV" + "/";
+
+                                // Always MC. 2016-05-18
+                                strAWB += "MC";
+                                if (fwbVolEntity.unitCode == "INH")
+                                {
+                                    strAWB += string.Format("{0:0.00}", (fwbVolEntity.volWeight / 166)) + "\r\n";
+                                }
+                                else
+                                {
+                                    strAWB += string.Format("{0:0.00}", fwbVolEntity.volWeight) + "\r\n";
+                                }
                             }
                         }
                     }
                 }
-            }
+            } // IF NOT TURKISH airline. END.
+            
 
             //OTH
             if (msgEntity.colCharge != null && msgEntity.colCharge.Count > 0)
             {
                 index = 1;
-                foreach (FwbOtherChargeEntity fwbOtherChargeEntity in msgEntity.colCharge)
+                //2017-12-21 OTH modified
+                foreach (FwbOtherChargeEntity fwbOtherChargeEntity in msgEntity.colCharge.Where(x=>x.chargeAmt > 0))
                 {
                     if (index == 1)
                         strAWB += "OTH";
@@ -289,7 +299,7 @@ namespace ExpMQManager.BLL
                 if(msgEntity.colnewDBOTH != null && msgEntity.colnewDBOTH.Count > 0)
                 {
                     int OTHindex = 1;
-                    foreach(Fwb_newDB_OTHEntity fwb_newDB_OTHEntity in msgEntity.colnewDBOTH)
+                    foreach(Fwb_newDB_OTHEntity fwb_newDB_OTHEntity in msgEntity.colnewDBOTH.Where(x=>x.chargeAmt > 0))
                     {
                         if (OTHindex == 1)
                             strAWB += "OTH";

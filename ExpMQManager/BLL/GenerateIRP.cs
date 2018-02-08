@@ -10,9 +10,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateIRP : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            IrpEntity irpEntity = new IrpDAC().GetIRPInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            IrpEntity irpEntity = new IrpDAC().GetIRPInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpIRP(irpEntity, msgType, subType);
         }
 

@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateAWD : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            AwdEntity rcfEntity = new AwdDAC().GetAWDInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            AwdEntity rcfEntity = new AwdDAC().GetAWDInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpAWD(rcfEntity, msgType, subType);
         }
 

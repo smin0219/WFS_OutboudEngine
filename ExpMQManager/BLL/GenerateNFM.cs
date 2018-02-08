@@ -11,9 +11,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateNFM : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             List<NfmEntity> nfmEntityCol = new NfmDAC().GetNFMColDAC(flightSeq);
             return buildupNFM(baseEntity, nfmEntityCol, msgType, subType);
         }

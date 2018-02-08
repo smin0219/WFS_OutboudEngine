@@ -13,7 +13,7 @@ namespace ExpMQManager.DAL
     {
         public bool isLiveParsing = Convert.ToBoolean(ConfigurationManager.AppSettings["IsLiveParsing"]);
 
-        public BaseEntity GetBaseAWBInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public BaseEntity GetBaseAWBInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
             string strSql = "";
             BaseEntity baseEntity = new BaseEntity();
@@ -24,12 +24,66 @@ namespace ExpMQManager.DAL
                 {
                     /* Import Common Message Header */
                     case "DLV":
+                    case "RTF":
                     case "RCF":
                     case "NFD":
                     case "AWD":
                     case "ARR":
                     case "TFD":
-                        strSql = @" SELECT   A.iid 
+
+                        if(subType == "RTF" && mid == 0)
+                        {
+                            strSql = @"
+                                    DECLARE @queueID INT = {0}  		-- queueid
+                                    DECLARE @rcfID INT = {1}			-- refID
+                                    DECLARE @flightSeq INT = {2}    	-- flightseq
+
+                                    SELECT   A.iid 
+                                            ,A.msgType 
+                                            ,A.subMsgType 
+                                            ,A.MID 
+                                            ,A.FlightSeq 
+                                            ,A.Lcode
+                                            ,A.Ccode 
+                                            ,A.createdDate 
+                                            ,A.CreatedBy 
+                                            ,B.Prefix 
+                                            ,B.AWB
+                                            ,C.Origin as Origin
+                                            ,(CASE WHEN epicM.MID != 0 THEN epicM.OriginPortCd ELSE C.Origin END) as OriginCd 
+                                            ,(CASE WHEN epicM.MID != 0 THEN epicM.DestinationPortCd ELSE C.Dest END) as DestCd
+                                            ,C.Dest as Dest
+                                            ,C.Partial as Partial 
+                                            ,B.ManPcs as Pcs 
+                                            ,B.Weight as Weight  
+                                            ,D.msgVersion 
+                                            ,D.msgAddress
+                                            ,'' as Shipper
+
+	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy FROM EDI_Msg_Queue WHERE iid = @queueID) as A
+	                                    JOIN RCF_BCLItem as B
+	                                    ON A.RefID = B.idnum
+                                        LEFT JOIN ePic_Master2 as epicM ON B.MID = epicM.MID
+	                                    LEFT JOIN (SELECT FlightSeq, 'T' as Partial, MAX(FinalDest) as Dest, MAX(Origin) as Origin FROM ePic_Flightmaster WHERE FlightSeq = @flightSeq GROUP BY FlightSeq) as C
+	                                    ON A.FlightSeq = C.FlightSeq
+	                                    LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, Active, Dest as Destination, SubMsgType FROM EDI_Address GROUP BY Carrier, MsgType, SubMsgType, Dest, Active) as  D 
+                                        ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1' 
+		                                    AND ISNULL(D.Destination, '') = ( CASE WHEN EXISTS (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND Dest = C.Dest AND msgType = 'FSU' AND (SubMsgType LIKE '%{3}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN C.Dest
+                                                                                WHEN EXISTS  (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND (Dest = '' or Dest is NULL) AND msgType = 'FSU' AND (SubMsgType LIKE '%{3}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN ''
+											                                    ELSE 'NON' END)
+		                                    AND (D.subMsgType LIKE '%{3}%' or D.SubMsgType is NULL or D.SubMsgType = '')
+
+	                                    WHERE A.iid = @queueID
+                                    ";
+                            if (isLiveParsing)
+                            {
+                                strSql = strSql + " AND A.Status = 'W' ";
+                            }
+                            strSql = string.Format(strSql, queueId, refID, flightSeq, subType);
+                        }
+                        else
+                        {
+                            strSql = @" SELECT   A.iid 
                                             ,A.msgType 
                                             ,A.subMsgType 
                                             ,A.MID 
@@ -70,12 +124,66 @@ namespace ExpMQManager.DAL
                                     WHERE A.MID = {0} AND A.msgType = 'FSU' AND A.subMsgType = '{1}' AND A.iid = {3}
                                           	--AND A.Status = 'W' 
                             ";
+                            if (isLiveParsing)
+                            {
+                                strSql = strSql + " AND A.Status = 'W' ";
+                            }
+
+                            strSql = string.Format(strSql, mid, subType, flightSeq, queueId);
+                        }
+                        
+                        break;
+
+                    // added for real time RCF. 2018-1-11
+                    case "DIS":
+                        strSql = @"
+                                    DECLARE @queueID INT = {0}  		-- queueid
+                                    DECLARE @rcfID INT = {1}			-- refID
+                                    DECLARE @flightSeq INT = {2}    	-- flightseq
+
+                                    SELECT   A.iid 
+                                            ,A.msgType 
+                                            ,A.subMsgType 
+                                            ,A.MID 
+                                            ,A.FlightSeq 
+                                            ,A.Lcode
+                                            ,A.Ccode 
+                                            ,A.createdDate 
+                                            ,A.CreatedBy 
+                                            ,B.Prefix 
+                                            ,B.AWB
+                                            ,C.Origin as Origin
+                                            ,(CASE WHEN epicM.MID != 0 THEN epicM.OriginPortCd ELSE C.Origin END) as OriginCd 
+                                            ,(CASE WHEN epicM.MID != 0 THEN epicM.DestinationPortCd ELSE C.Dest END) as DestCd
+                                            ,C.Dest as Dest
+                                            ,C.Partial as Partial 
+                                            ,B.ManPcs as Pcs 
+                                            ,B.Weight as Weight  
+                                            ,D.msgVersion 
+                                            ,D.msgAddress
+                                            ,'' as Shipper
+
+	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy FROM EDI_Msg_Queue WHERE iid = @queueID) as A
+	                                    JOIN RCF_BCLItem as B
+	                                    ON A.RefID = B.idnum
+                                        LEFT JOIN ePic_Master2 as epicM ON B.MID = epicM.MID
+	                                    LEFT JOIN (SELECT FlightSeq, 'T' as Partial, MAX(FinalDest) as Dest, MAX(Origin) as Origin FROM ePic_Flightmaster WHERE FlightSeq = @flightSeq GROUP BY FlightSeq) as C
+	                                    ON A.FlightSeq = C.FlightSeq
+	                                    LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, Active, Dest as Destination, SubMsgType FROM EDI_Address GROUP BY Carrier, MsgType, SubMsgType, Dest, Active) as  D 
+                                        ON A.msgType = D.msgType AND A.Carrier = D.Carrier AND D.Active = '1' 
+		                                    AND ISNULL(D.Destination, '') = ( CASE WHEN EXISTS (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND Dest = C.Dest AND msgType = 'FSU' AND (SubMsgType LIKE '%{3}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN C.Dest
+                                                                                WHEN EXISTS  (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND (Dest = '' or Dest is NULL) AND msgType = 'FSU' AND (SubMsgType LIKE '%{3}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN ''
+											                                    ELSE 'NON' END)
+		                                    AND (D.subMsgType LIKE '%{3}%' or D.SubMsgType is NULL or D.SubMsgType = '')
+
+	                                    WHERE A.iid = @queueID
+                                    ";
+
                         if (isLiveParsing)
                         {
                             strSql = strSql + " AND A.Status = 'W' ";
                         }
-
-                        strSql = string.Format(strSql, mid, subType, flightSeq, queueId);
+                        strSql = string.Format(strSql, queueId, refID, flightSeq, "RTF");
                         break;
 
                     /* Export Common Message Header */
@@ -96,7 +204,7 @@ namespace ExpMQManager.DAL
 
                         //EDI_Address Dest filter. 2015-08-25
                         strSql = @"
-                                        SELECT A.iid ,A.msgType ,A.subMsgType ,A.MID ,FlightSeq ,A.Lcode
+                                        SELECT A.iid ,A.msgType ,A.subMsgType ,A.MID, FlightSeq ,A.Lcode
                                           ,A.Ccode ,A.createdDate ,A.CreatedBy ,Prefix ,AWB
                                           ,Origin, OriginCd ,DestCd, Dest
                                           ,Partial 
@@ -895,6 +1003,7 @@ namespace ExpMQManager.DAL
 
                 BaseEntity baseEntity = new BaseEntity(
                     queueId,
+                    reader["Ccode"].ToString().Trim(),
                     reader["msgType"].ToString().Trim(),
                     reader["msgAddress"].ToString().Trim(),
                     msgVersion,
@@ -952,6 +1061,7 @@ namespace ExpMQManager.DAL
 
                 BaseEntity baseEntity = new BaseEntity(
                     queueId,
+                    reader["Ccode"].ToString().Trim(),
                     reader["msgType"].ToString().Trim(),
                     reader["msgAddress"].ToString().Trim(),
                     msgVersion,
@@ -1267,6 +1377,34 @@ namespace ExpMQManager.DAL
                             WHERE A.iid = {0}
                         ";
                 strSql = string.Format(strSql, queueId, msgBody.Replace("'", ""), subType.ToUpper());
+            }
+            else if (msgType.ToUpper() == "FSU" && (subType.ToUpper() == "RTF" || subType.ToUpper() == "DIS"))
+            {
+                strSql = @" 
+                        DECLARE @iid INT = {0}
+						DECLARE @flightSeq INT = (SELECT FlightSeq FROM EDI_Msg_Queue WHERE iid = @iid)
+
+						    INSERT INTO EDI_Msg
+                             (queueId, Carrier, A.Lcode, A.Ccode, A.MID,
+	                          FlightSeq, FlightNo, MsgAddress, MsgVersion, MsgType,
+	                          subMsgType, MsgBody, SendDate, SendBy, ResendYN)
+
+
+                            SELECT A.iid, A.Carrier, A.Lcode, A.Ccode, A.MID
+	                              ,A.FlightSeq, A.FlightNo, msgAddress, msgVersion, A.msgType
+	                              ,A.subMsgType, '{1}', A.createdDate, A.CreatedBy, A.ResendYN
+                            FROM (SELECT iid, Carrier, Lcode, Ccode, MID, RefID, FlightSeq, FlightNo, MsgType, SubMsgType, CreatedDate, CreatedBy, ResendYN FROM EDI_Msg_Queue WHERE iid = @iid) as A
+                            LEFT JOIN (SELECT TOP 1 FlightSeq, FinalDest as Dest FROM ePic_FlightMaster WHERE FlightSeq = @flightSeq) as B ON A.FlightSeq = B.FlightSeq
+                            LEFT JOIN (SELECT MsgType, Carrier, MAX(MsgVersion) MsgVersion, MAX(MsgAddress) MsgAddress, Dest as Destination, SubMsgType
+                                    FROM EDI_Address GROUP BY Carrier, MsgType, Dest, SubMsgType) C 
+                                    ON A.msgType = C.msgType AND A.Carrier = C.Carrier 
+                                    AND ISNULL(C.Destination, '') = (CASE WHEN EXISTS (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND DEST = B.Dest AND MsgType = A.msgType AND (SubMsgType LIKE '%{2}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN B.Dest
+                                                                          WHEN EXISTS (SELECT MsgAddress FROM EDI_Address WHERE Carrier = A.Carrier AND (Dest = '' or Dest is NULL) AND MsgType = A.msgType AND (SubMsgType LIKE '%{2}%' or SubMsgType is NULL or SubMsgType = '') AND Active = '1') THEN ''
+															              ELSE 'NON' END)
+                                    AND (C.subMsgType LIKE '%{2}%' or C.SubMsgType is NULL or C.SubMsgType = '')
+                        ";
+                strSql = string.Format(strSql, queueId, msgBody.Replace("'", ""), "RTF");   // subType.ToUpper());
+
             }
             else if (msgType.ToUpper() == "FFM")
             {

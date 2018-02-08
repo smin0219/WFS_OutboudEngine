@@ -5,12 +5,13 @@ using System.Text;
 using ExpMQManager.DAL;
 using ExpMQManager.Data;
 using System.Data;
+using System.Net.Mail;
 
 namespace ExpMQManager.BLL
 {
     public abstract class GenerateBase : BaseDAC
     {
-        public abstract string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId);
+        public abstract string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId);
 
         public string buildUpBase(BaseEntity msgEntity, string msgType, string subType)
         {
@@ -22,6 +23,24 @@ namespace ExpMQManager.BLL
             string originAddr = "JFKCDCR";  //SASCSXH
             string curTime = currentGMT.ToString("dd") + currentGMT.ToString("HH") + currentGMT.ToString("mm");
             string priority = "QD";
+
+            // if message was sent from e3 then use JFKCTCR. requested by Cecile on 2018-01-03.
+            bool isEmail = false;
+            try
+            {
+                MailAddress checkupEmail = new MailAddress(msgEntity.createdBy);
+                isEmail = true;
+                checkupEmail = null;
+            }
+            catch
+            {
+                isEmail = false;
+            }
+            if (isEmail)
+            {
+                originAddr = "JFKCTCR";
+            }
+
 
             if (msgEntity.msgDestAddr == "")
                 throw new Exception("No Message recipient is present msg QueueID: " + msgEntity.queueId);
@@ -70,15 +89,19 @@ namespace ExpMQManager.BLL
                 //char shipmentCode = replaceShipmentIndicator(msgEntity.shipmentIndicator[0]);
                 char shipmentCode = 'T';
                 strbaseAWB += msgType.ToUpper() + "/" + msgEntity.msgVersion + "\r\n";
-                strbaseAWB += msgEntity.prefix + "-" + msgEntity.awb + msgEntity.origin + msgEntity.dest + "/" + shipmentCode + msgEntity.pcs;
 
-                if (subType.ToUpper() == "FOH")
+                if (subType.ToUpper() != "DIS")
                 {
-                    strbaseAWB += "\r\n";
-                }
-                else
-                {
-                    strbaseAWB += "K" + weightFormatted + "\r\n";
+                    strbaseAWB += msgEntity.prefix + "-" + msgEntity.awb + msgEntity.origin + msgEntity.dest + "/" + shipmentCode + msgEntity.pcs;
+
+                    if (subType.ToUpper() == "FOH")
+                    {
+                        strbaseAWB += "\r\n";
+                    }
+                    else
+                    {
+                        strbaseAWB += "K" + weightFormatted + "\r\n";
+                    }
                 }
                 
                 #endregion

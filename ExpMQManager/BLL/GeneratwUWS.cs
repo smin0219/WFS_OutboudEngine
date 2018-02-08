@@ -10,9 +10,9 @@ namespace ExpMQManager.BLL
 {
     public class GeneratwUWS : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             List<UwsEntity> uwsEntityCol = new UwsDAC().GetUWSColDAC(flightSeq);
             return buildupUWS(baseEntity, uwsEntityCol, msgType, subType);
         }

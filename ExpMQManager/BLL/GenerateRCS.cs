@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateRCS : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            RcsEntity rcsEntity = new RcsDAC().GetRCSInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            RcsEntity rcsEntity = new RcsDAC().GetRCSInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpRCS(rcsEntity, msgType, subType);
         }
 

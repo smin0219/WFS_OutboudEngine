@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateMAN : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            ManEntity rcfEntity = new ManDAC().GetMANInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            ManEntity rcfEntity = new ManDAC().GetMANInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpMAN(rcfEntity, msgType, subType);
         }
 

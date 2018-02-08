@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateFHL : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int hid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int hid, int refID, int flightSeq, int queueId)
         {
-            FhlEntity fhlEntity = new FhlDAC().GetFHLInfoDAC(hid, flightSeq, msgType, subType, queueId);
+            FhlEntity fhlEntity = new FhlDAC().GetFHLInfoDAC(hid, refID, flightSeq, msgType, subType, queueId);
             return buildUpFHL(fhlEntity, msgType, subType);
         }
 
@@ -157,20 +157,20 @@ namespace ExpMQManager.BLL
 
                 strAWB += "/" + truncateString(msgEntity.shipperCountry == "" ? "US" : msgEntity.shipperCountry, 2);
 
-                if (msgEntity.shipperZip.Trim() != "")
+                if (msgEntity.shipperZip != null && msgEntity.shipperZip.Trim() != "")
                 {
-                    strAWB += "/" + truncateString(msgEntity.shipperZip, 25);
+                    strAWB += "/" + truncateString(msgEntity.shipperZip.Trim(), 25);
                 }
 
                 if (msgEntity.shipperAddrTel != null && msgEntity.shipperAddrTel.Trim() != "")
                 {
-                    if (msgEntity.shipperContact == null || msgEntity.shipperContact.Trim() == "")
-                        msgEntity.shipperContact = "TE";
-
                     if (msgEntity.shipperZip == null || msgEntity.shipperZip.Trim() == "")
                         strAWB += "/";
 
-                    strAWB += "/" + truncateString(msgEntity.shipperContact, 25) + "/" + truncateString(msgEntity.shipperAddrTel, 25);
+                    if (msgEntity.shipperContact == null || msgEntity.shipperContact.Trim() == "")
+                        msgEntity.shipperContact = "TE";
+
+                    strAWB += "/" + truncateString(msgEntity.shipperContact.Trim(), 25) + "/" + truncateString(msgEntity.shipperAddrTel.Trim(), 25);
                 }
 
                 //strAWB += "/" + truncateString(msgEntity.shipperZip,9);
@@ -196,20 +196,20 @@ namespace ExpMQManager.BLL
 
                 strAWB += "/" + truncateString(msgEntity.cneeCountry, 2);     //"/" + truncateString(msgEntity.shipperZip, 9) +
 
-                if (msgEntity.cneeZip.Trim() != "")
+                if (msgEntity.cneeZip != null && msgEntity.cneeZip.Trim() != "")
                 {
-                    strAWB += "/" + truncateString(msgEntity.cneeZip, 25);
+                    strAWB += "/" + truncateString(msgEntity.cneeZip.Trim(), 25);
                 }
 
                 if(msgEntity.cneeAddrTel.Trim() != "")
                 {
-                    if (msgEntity.cneeContact == null || msgEntity.cneeContact.Trim() == "")
-                        msgEntity.cneeContact = "TE";
-
                     if (msgEntity.cneeZip == null || msgEntity.cneeZip.Trim() == "")
                         strAWB += "/";
 
-                    strAWB += "/" + truncateString(msgEntity.cneeContact, 25) + "/" + truncateString(msgEntity.cneeAddrTel, 25);
+                    if (msgEntity.cneeContact == null || msgEntity.cneeContact.Trim() == "")
+                        msgEntity.cneeContact = "TE";
+
+                    strAWB += "/" + truncateString(msgEntity.cneeContact.Trim(), 25) + "/" + truncateString(msgEntity.cneeAddrTel.Trim(), 25);
                 }
 
                 //strAWB += "/" + truncateString(msgEntity.cneeZip, 9);

@@ -9,9 +9,9 @@ namespace ExpMQManager.DAL
 {
     public class RctDAC : BaseDAC
     {
-        public RctEntity GetRCTInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public RctEntity GetRCTInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
 

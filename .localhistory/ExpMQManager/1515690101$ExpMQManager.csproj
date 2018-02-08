@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BAF856AE-7482-4412-9902-54DBD39B092E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ExpMQManager</RootNamespace>
+    <AssemblyName>ExpMQManager</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>I:\Publish\ExportEngine\</PublishUrl>
+    <Install>false</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>23B095A7D257CDB543AC59CB008FA3B228D0196A</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>ExpMQManager_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="amqmdnet">
+      <HintPath>DLL\amqmdnet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseDB.cs" />
+    <Compile Include="baseMail.cs" />
+    <Compile Include="BLL\GenerateDIS.cs" />
+    <Compile Include="DAL\FohDAC.cs" />
+    <Compile Include="BLL\GenerateFHL.cs" />
+    <Compile Include="BLL\GenerateFBR.cs" />
+    <Compile Include="BLL\GenerateFOH.cs" />
+    <Compile Include="BLL\GenerateNFM.cs" />
+    <Compile Include="BLL\GenerateRCT.cs" />
+    <Compile Include="BLL\GenerateTFD.cs" />
+    <Compile Include="BLL\GenerateBase.cs" />
+    <Compile Include="BLL\GenerateAWD.cs" />
+    <Compile Include="BLL\GenerateDLV.cs" />
+    <Compile Include="BLL\GenerateEmail.cs" />
+    <Compile Include="BLL\GenerateFFM.cs" />
+    <Compile Include="BLL\GenerateFWB.cs" />
+    <Compile Include="BLL\GenerateIRP.cs" />
+    <Compile Include="BLL\GenerateMAN.cs" />
+    <Compile Include="BLL\GenerateRCF.cs" />
+    <Compile Include="BLL\GenerateRCS.cs" />
+    <Compile Include="BLL\GeneratwUWS.cs" />
+    <Compile Include="BLL\sendSITAmsg.cs" />
+    <Compile Include="CASMqm.cs" />
+    <Compile Include="DAL\AwdDAC.cs" />
+    <Compile Include="DAL\BaseDAC.cs" />
+    <Compile Include="DAL\FhlDAC.cs" />
+    <Compile Include="DAL\NfmDAC.cs" />
+    <Compile Include="DAL\RctDAC.cs" />
+    <Compile Include="DAL\ServerInfoDAC.cs" />
+    <Compile Include="DAL\TfdDAC.cs" />
+    <Compile Include="DAL\DlvDAC.cs" />
+    <Compile Include="DAL\EmailDAC.cs" />
+    <Compile Include="DAL\FfmDAC.cs" />
+    <Compile Include="DAL\FwbDAC.cs" />
+    <Compile Include="DAL\IrpDAC.cs" />
+    <Compile Include="DAL\ManDAC.cs" />
+    <Compile Include="DAL\RcfDAC.cs" />
+    <Compile Include="DAL\RcsDAC.cs" />
+    <Compile Include="DAL\UwsDAC.cs" />
+    <Compile Include="Data\AwdEntity.cs" />
+    <Compile Include="Data\BaseEntity.cs" />
+    <Compile Include="Data\FfmSHCEntity.cs" />
+    <Compile Include="Data\FhlOCIEntity.cs" />
+    <Compile Include="Data\FhlHTSEntity.cs" />
+    <Compile Include="Data\FhlTXTEntity.cs" />
+    <Compile Include="Data\FhlOtherChargeEntity.cs" />
+    <Compile Include="Data\FhlEntity.cs" />
+    <Compile Include="Data\FOHEntity.cs" />
+    <Compile Include="Data\FwbNGEntity.cs" />
+    <Compile Include="Data\FwbOCIEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_OCIEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_OTHEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_PPDCOLEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_RTDEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_SHCEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_SSREntity.cs" />
+    <Compile Include="Data\NfmEntity.cs" />
+    <Compile Include="Data\RctEntity.cs" />
+    <Compile Include="Data\TfdEntity.cs" />
+    <Compile Include="Data\DlvEntity.cs" />
+    <Compile Include="Data\EmailEntity.cs" />
+    <Compile Include="Data\FfmEntity.cs" />
+    <Compile Include="Data\FwbEntity.cs" />
+    <Compile Include="Data\FwbOtherChargeEntity.cs" />
+    <Compile Include="Data\FwbRateEntity.cs" />
+    <Compile Include="Data\FwbVolumeEntity.cs" />
+    <Compile Include="Data\IrpEntity.cs" />
+    <Compile Include="Data\ManEntity.cs" />
+    <Compile Include="Data\RcfEntity.cs" />
+    <Compile Include="Data\RcsEntity.cs" />
+    <Compile Include="Data\UwsEntity.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MQbuildMsg.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\ValidationUtil.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ExpMQManager_TemporaryKey.pfx" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

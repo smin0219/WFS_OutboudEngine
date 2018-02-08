@@ -9,9 +9,9 @@ namespace ExpMQManager.DAL
 {
     public class ManDAC : BaseDAC
     {
-        public ManEntity GetMANInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public ManEntity GetMANInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
 //            strSql = @" SELECT MIN(A.FlightNo) FlightNo, SUM(OnPcs) Pcs, SUM(OnWeight) Weight, MIN(Partial) Partial,

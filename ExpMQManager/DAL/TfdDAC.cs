@@ -10,10 +10,10 @@ namespace ExpMQManager.DAL
     public class TfdDAC : BaseDAC
     {
         int mid_temp = 0;
-        public TfdEntity GetTfdInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public TfdEntity GetTfdInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
             mid_temp = mid;
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
 //            strSql = @" SELECT WHCFTime, idnum, A.MID, cnee,

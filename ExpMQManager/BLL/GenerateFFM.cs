@@ -10,9 +10,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateFFM : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             List<FfmEntity> ffmEntityCol = new FfmDAC().GetFFMColDAC(mid, flightSeq, msgType, subType, baseEntity.Lcode);
             return buildUpFFM(baseEntity, ffmEntityCol, msgType, subType);
         }
@@ -67,7 +67,8 @@ namespace ExpMQManager.BLL
                 
                 //Added on 7/1 request. do not round weights for air china 
                 // added. Ccode : IASKZDFW2, NCAJFK. 2016-02-11
-                if (baseEntity.Ccode == "ARCHJFK" || baseEntity.Ccode == "IASKZDFW2" || baseEntity.Ccode == "NCAJFK")
+                if (baseEntity.Ccode == "ARCHJFK" || baseEntity.Ccode == "IASKZDFW2" || baseEntity.Ccode == "NCAJFK" 
+                    || baseEntity.Ccode == "WFSSKBOS" || baseEntity.Ccode == "SASIAD" || baseEntity.Ccode == "SASEWR" || baseEntity.Ccode == "ARCHJFK1") // added on 2017-11-6. requested by Mike Serzo 11:46am
                     strAWB += msgEntity.shipmentIndicator + msgEntity.fPcs + "K" + msgEntity.fWeight.ToString("F1");
                 else
                 {

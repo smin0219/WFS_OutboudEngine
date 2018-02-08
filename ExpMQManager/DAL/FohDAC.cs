@@ -9,9 +9,9 @@ namespace ExpMQManager.DAL
 {
     public class FohDAC : BaseDAC
     {
-        public FOHEntity GetFOHInfoDAC(int mid, int flightSeq, string msgType, string subType, int queueId)
+        public FOHEntity GetFOHInfoDAC(int mid, int refID, int flightSeq, string msgType, string subType, int queueId)
         {
-            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseAWB = GetBaseAWBInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
 
             string strSql = "";
             strSql = @" SELECT MID, shipper, Pcs, Weight, (select top 1 CreatedDate FROM Edi_Msg_Queue where iid = {1}) as fohTime

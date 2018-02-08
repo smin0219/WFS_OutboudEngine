@@ -11,9 +11,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateFBR : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            BaseEntity baseEntity = new BaseDAC().GetBaseAWBInfoDAC(mid, refID,  flightSeq, msgType, subType, queueId);
             // need only baseEntity
 
             return buildupFBR(baseEntity, msgType, subType);

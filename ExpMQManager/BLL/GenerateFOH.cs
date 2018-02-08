@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateFOH : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            FOHEntity fohEntity = new FohDAC().GetFOHInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            FOHEntity fohEntity = new FohDAC().GetFOHInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpFoh(fohEntity, msgType, subType);
         }
         public string buildUpFoh(FOHEntity msgEntity, string msgType, string subType)

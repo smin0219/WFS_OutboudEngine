@@ -9,9 +9,9 @@ namespace ExpMQManager.BLL
 {
     public class GenerateTFD : GenerateBase
     {
-        public override string doBuildUp(string msgType, string subType, int mid, int flightSeq, int queueId)
+        public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
-            TfdEntity tfdEntity = new TfdDAC().GetTfdInfoDAC(mid, flightSeq, msgType, subType, queueId);
+            TfdEntity tfdEntity = new TfdDAC().GetTfdInfoDAC(mid, refID, flightSeq, msgType, subType, queueId);
             return buildUpTfd(tfdEntity, msgType, subType);
         }
 
