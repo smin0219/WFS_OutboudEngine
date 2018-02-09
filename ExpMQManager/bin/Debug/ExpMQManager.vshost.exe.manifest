@@ -61,17 +61,17 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>2iFbfrjXZJ6onmbLsW1t9gltJIk=</dsig:DigestValue>
+        <dsig:DigestValue>w6H0E9rO55041QbgRZqjpB6RqBI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="ExpMQManager.exe.config" size="395">
+  <file name="ExpMQManager.exe.config" size="393">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>XjZe3IoZ2EmcQReZZG71IwgGn/8=</dsig:DigestValue>
+      <dsig:DigestValue>kOQr78HnvqGTG2syU726wWKpCVk=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

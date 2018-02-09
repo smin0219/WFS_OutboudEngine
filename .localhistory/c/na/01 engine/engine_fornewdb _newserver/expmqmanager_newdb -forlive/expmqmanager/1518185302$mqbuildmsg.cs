@@ -29,10 +29,6 @@ namespace ExpMQManager
                if (isLive)
                 {
                     strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
-
-                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
-                    //            where iid in (16613038)";
-
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId FROM EDI_Msg_Queue WHERE iid = 4326345";
                     //strSql = @" select * from EDI_Msg_Queue where iid in (9733306)";
 
@@ -50,10 +46,9 @@ namespace ExpMQManager
 
                     //            ";
 
-                    //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
+                    strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
 
-                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
-                                where iid in (16613038)";
+                    //strSql = @" select * from EDI_Msg_Queue where iid in (4344489)";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype = 'Email' and submsgtype = 'TTN' order by iid desc";
 
@@ -346,9 +341,6 @@ namespace ExpMQManager
                                         }
                                         else if (subType != null && subType.Trim() != string.Empty)
                                         {
-                                            if (subType.ToUpper() == "RTF")
-                                                subType = "RCF";
-
                                             emailSubj = msgType.ToUpper() + " - " + subType.ToUpper() + " message";
                                         }
                                         else

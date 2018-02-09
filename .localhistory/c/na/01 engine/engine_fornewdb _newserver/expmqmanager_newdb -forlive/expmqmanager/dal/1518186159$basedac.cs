@@ -60,7 +60,7 @@ namespace ExpMQManager.DAL
                                             ,D.msgAddress
                                             ,'' as Shipper
 
-	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy, Status FROM EDI_Msg_Queue WHERE iid = @queueID) as A
+	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy FROM EDI_Msg_Queue WHERE iid = @queueID) as A
 	                                    JOIN RCF_BCLItem as B
 	                                    ON A.RefID = B.idnum
                                         LEFT JOIN ePic_Master2 as epicM ON B.MID = epicM.MID
@@ -163,7 +163,7 @@ namespace ExpMQManager.DAL
                                             ,D.msgAddress
                                             ,'' as Shipper
 
-	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy, Status FROM EDI_Msg_Queue WHERE iid = @queueID) as A
+	                                    FROM (SELECT iid, msgType, subMsgType, Carrier, MID, RefID, FlightSeq, Lcode, Ccode, CreatedDate, CreatedBy FROM EDI_Msg_Queue WHERE iid = @queueID) as A
 	                                    JOIN RCF_BCLItem as B
 	                                    ON A.RefID = B.idnum
                                         LEFT JOIN ePic_Master2 as epicM ON B.MID = epicM.MID
