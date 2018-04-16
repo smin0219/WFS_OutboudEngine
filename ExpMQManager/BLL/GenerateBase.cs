@@ -50,6 +50,7 @@ namespace ExpMQManager.BLL
             //Build TypeB Destination Address
             string destAddrOut = "";
             string[] destAddr = msgEntity.msgDestAddr.ToUpper().Split(' ');
+            msgEntity.msgDestAddrEmail = "";
             foreach (string addr in destAddr)
             {
                 //Filter-out Email Address

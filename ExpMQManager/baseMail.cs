@@ -56,7 +56,7 @@ namespace ExpMQManager
 
                 SmtpClient smtp = new SmtpClient(_serverIP, _serverPort);
                 MailMessage m = new MailMessage();
-                m.From = new MailAddress(_emailSender, "Cargo Airport Services, LLC");
+                m.From = new MailAddress(_emailSender, "Worldwide Flight Services");
                 if (isLiveParsing)
                 {
                     if (sAddress.IndexOf(";") > -1)

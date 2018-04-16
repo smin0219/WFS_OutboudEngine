@@ -164,13 +164,15 @@ namespace ExpMQManager.BLL
 
                 if (msgEntity.shipperAddrTel != null && msgEntity.shipperAddrTel.Trim() != "")
                 {
+                    msgEntity.shipperAddrTel = msgEntity.shipperAddrTel.Replace(" ", string.Empty);
+
                     if (msgEntity.shipperZip == null || msgEntity.shipperZip.Trim() == "")
                         strAWB += "/";
 
                     if (msgEntity.shipperContact == null || msgEntity.shipperContact.Trim() == "")
                         msgEntity.shipperContact = "TE";
 
-                    strAWB += "/" + truncateString(msgEntity.shipperContact.Trim(), 25) + "/" + truncateString(msgEntity.shipperAddrTel.Trim(), 25);
+                    strAWB += "/" + truncateString(msgEntity.shipperContact.Trim(), 3) + "/" + truncateString(msgEntity.shipperAddrTel.Trim(), 25);
                 }
 
                 //strAWB += "/" + truncateString(msgEntity.shipperZip,9);
@@ -203,13 +205,15 @@ namespace ExpMQManager.BLL
 
                 if(msgEntity.cneeAddrTel.Trim() != "")
                 {
+                    msgEntity.cneeAddrTel = msgEntity.cneeAddrTel.Replace(" ", string.Empty);
+
                     if (msgEntity.cneeZip == null || msgEntity.cneeZip.Trim() == "")
                         strAWB += "/";
 
                     if (msgEntity.cneeContact == null || msgEntity.cneeContact.Trim() == "")
                         msgEntity.cneeContact = "TE";
 
-                    strAWB += "/" + truncateString(msgEntity.cneeContact.Trim(), 25) + "/" + truncateString(msgEntity.cneeAddrTel.Trim(), 25);
+                    strAWB += "/" + truncateString(msgEntity.cneeContact.Trim(), 3) + "/" + truncateString(msgEntity.cneeAddrTel.Trim(), 25);
                 }
 
                 //strAWB += "/" + truncateString(msgEntity.cneeZip, 9);

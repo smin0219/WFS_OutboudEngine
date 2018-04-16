@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ExpMQManager.exe" size="615424">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ExpMQManager.exe" size="615936">
       <assemblyIdentity name="ExpMQManager" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>KGW6nQNyFppgZUBJq+l0La0VTbo=</dsig:DigestValue>
+        <dsig:DigestValue>bb8Gg/FJhEjO5/z5EMmv5Erj6Lo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

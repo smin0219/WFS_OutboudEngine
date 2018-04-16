@@ -26,9 +26,11 @@ namespace ExpMQManager
             try
             {
                 string strSql = "";
-               if (isLive)
+                if (isLive)
                 {
                     strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
+                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid = 9060349 ";
+
 
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
                     //            where iid in (16613038)";
@@ -46,14 +48,14 @@ namespace ExpMQManager
                     //                    strSql = @"select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
                     //                                from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) order by iid desc";
                     //strSql = @" select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
-                    //            from EDI_Msg_Queue where iid in (6578241)
+                    //            from EDI_Msg_Queue where iid in (17259323)
 
                     //            ";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
 
-                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
-                                where iid in (16613038)";
+                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-3-20' and Msgtype <> 'Email' ";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid = 17928493 ";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype = 'Email' and submsgtype = 'TTN' order by iid desc";
 
@@ -312,13 +314,13 @@ namespace ExpMQManager
 
 
                                     // added on 2017-11-20. requested by Mike(2017-11-20 03:04pm)
-                                    if(isLive)
+                                    if (isLive)
                                     {
                                         // changed on 2017-11-30. all SITA message. requested by Cecile(2017-11-30 12:40pm)
                                         //if(msgType == "FWB" || msgType == "FHL" || msgType == "FHL")
                                         if (msgReturn != "")
                                         {
-                                            if(baseMessage.msgDestAddrEmail != null && baseMessage.msgDestAddrEmail != "")
+                                            if (baseMessage.msgDestAddrEmail != null && baseMessage.msgDestAddrEmail != "")
                                             {
                                                 baseMessage.msgDestAddrEmail += ";nacs.wfs@cargoquality.com";
                                             }
@@ -328,6 +330,9 @@ namespace ExpMQManager
                                             }
                                         }
                                     }
+
+                                    if (!isLive)
+                                        baseMessage.msgDestAddrEmail = "";
 
                                     if (baseMessage.msgDestAddrEmail != "")
                                     {
@@ -410,7 +415,7 @@ namespace ExpMQManager
                                     listbox.Items.Clear();
                                 listbox.Items.Add(string.Format("Email QueueId:{0} is successfully sent!", mid));
                             }
-                            else if(emailResult == -2)
+                            else if (emailResult == -2)
                             {
                                 email.UpdateQueue(queueid, "E", "No receiver email address.");
                                 emailStatus = 255;
@@ -475,7 +480,7 @@ namespace ExpMQManager
                 }
             }
 
-            for (i = countCheck ; i < tmpMSGbody.Count(); i++)
+            for (i = countCheck; i < tmpMSGbody.Count(); i++)
             {
                 if (tmpMSGbody[i] != string.Empty)
                 {
@@ -485,7 +490,7 @@ namespace ExpMQManager
             }
 
             // only UWS, message type is reomved. becuase UWS doesn't have message version. (not working index "/")
-            if(msgType.ToUpper() == "UWS")
+            if (msgType.ToUpper() == "UWS")
             {
                 result = "UWS\r\n" + result;
             }

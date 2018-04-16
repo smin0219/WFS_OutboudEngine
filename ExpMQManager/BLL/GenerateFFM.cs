@@ -38,7 +38,7 @@ namespace ExpMQManager.BLL
             foreach (FfmEntity msgEntity in ffmEntityCol)
             {
                 //Print Message Header
-                if (idx == 1 || ((idx-1) % messageLimit == 0))
+                if (idx == 1 || ((idx - 1) % messageLimit == 0))
                 {
                     strAWB += base.buildUpBase(baseEntity, msgType, subType);
                     strAWB += msgSeq + "/" + baseEntity.flightNo.Trim() + "/" + fltDate + "/" + baseEntity.origin + "\r\n";
@@ -64,11 +64,12 @@ namespace ExpMQManager.BLL
 
                 //Print AWB Consignment
                 strAWB += msgEntity.prefix + "-" + msgEntity.awb + msgEntity.origin + msgEntity.dest + "/";
-                
+
                 //Added on 7/1 request. do not round weights for air china 
                 // added. Ccode : IASKZDFW2, NCAJFK. 2016-02-11
-                if (baseEntity.Ccode == "ARCHJFK" || baseEntity.Ccode == "IASKZDFW2" || baseEntity.Ccode == "NCAJFK" 
-                    || baseEntity.Ccode == "WFSSKBOS" || baseEntity.Ccode == "SASIAD" || baseEntity.Ccode == "SASEWR" || baseEntity.Ccode == "ARCHJFK1") // added on 2017-11-6. requested by Mike Serzo 11:46am
+                if (baseEntity.Ccode == "ARCHJFK" || baseEntity.Ccode == "IASKZDFW2" || baseEntity.Ccode == "NCAJFK"
+                    || baseEntity.Ccode == "WFSSKBOS" || baseEntity.Ccode == "SASIAD" || baseEntity.Ccode == "SASEWR" || baseEntity.Ccode == "ARCHJFK1" // added on 2017-11-6. requested by Mike Serzo 11:46am
+                    || baseEntity.Ccode == "IASQRIAH")  // added on 2018-4-9 16:39 requested by Cecile
                     strAWB += msgEntity.shipmentIndicator + msgEntity.fPcs + "K" + msgEntity.fWeight.ToString("F1");
                 else
                 {
@@ -101,7 +102,10 @@ namespace ExpMQManager.BLL
 
                 //Print Commodity
                 // 2014-04-14
-                Regex rgx = new Regex("[^a-zA-Z0-9 -]");
+                //Regex rgx = new Regex("[^a-zA-Z0-9 -]");
+
+                // add not filter dot('.'). requested by Cecile on 2018-4-16 11:51am
+                Regex rgx = new Regex("[^a-zA-Z0-9 -\\.]");
                 string str = rgx.Replace(msgEntity.commodity, "");
 
                 strAWB += "/" + truncateString(str, 15).ToUpper();
