@@ -47,12 +47,14 @@ namespace ExpMQManager
 
                     //                    strSql = @"select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
                     //                                from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) order by iid desc";
-                    strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG
-                                from EDI_Msg_Queue where iid in (4345334)";
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
+                    //            from EDI_Msg_Queue where iid in (17259323)
+
+                    //            ";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
 
-                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-5-14' and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-5-3' and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid = 4345113 ";
 
                     //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype = 'Email' and submsgtype = 'TTN' order by iid desc";
@@ -331,8 +333,8 @@ namespace ExpMQManager
 
                                     if (!isLive)
                                     {
-                                        //baseMessage.msgDestAddrEmail = "cpark@wfs.aero;";
-                                        baseMessage.msgDestAddrEmail = "";
+                                        baseMessage.msgDestAddrEmail = "cpark@wfs.aero;";
+
                                     }
 
                                     if (baseMessage.msgDestAddrEmail != "")

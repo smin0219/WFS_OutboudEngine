@@ -75,12 +75,14 @@ namespace ExpMQManager
                 }
                 else
                 {
-                    //m.To.Add("ckim@wfs.aero");
-                    //m.To.Add("Nigeena.Popal@wfs.aero");
-                    //m.To.Add("mserzo@wfs.aero");
-                    //m.To.Add("mivanova@wfs.aero");
-                    //m.To.Add("czhao@wfs.aero");
-                    m.To.Add("cpark@wfs.aero");
+                    baseMessage.msgDestAddrEmail = "ckim@wfs.aero;;;;;cpark@wfs.aero";
+                    m.To.Add(new MailAddress("ckim@wfs.aero"));
+                    m.To.Add(new MailAddress("Nigeena.Popal@wfs.aero"));
+                    m.To.Add(new MailAddress("mserzo@wfs.aero"));
+                    m.To.Add(new MailAddress("mivanova@wfs.aero"));
+                    m.To.Add(new MailAddress("czhao@wfs.aero"));
+                    m.To.Add(new MailAddress("ckim@wfs.aero"));
+
                 }
 
                 // for monitoring

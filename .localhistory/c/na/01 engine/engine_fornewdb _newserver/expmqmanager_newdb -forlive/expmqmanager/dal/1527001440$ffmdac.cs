@@ -217,18 +217,18 @@ namespace ExpMQManager.DAL
                             END
 	                        ) as SHC
 
-                        --, (
-	                    --    CASE WHEN ExpM.ChgWeight IS NOT NULL AND ExpM.ChgWeight > 0 THEN ExpM.ChgWeight
-                        --    ELSE ( ExpBD.[Weight] / 166 ) END 
-	                    --    ) as volWeight 
+                        , (
+	                        CASE WHEN ExpM.ChgWeight IS NOT NULL AND ExpM.ChgWeight > 0 THEN ExpM.ChgWeight
+                            ELSE ( ExpBD.[Weight] / 166 ) END 
+	                        ) as volWeight 
                         
                         -- added by Cecile. on 2018-5-18 9:29am
-                        ,(
-                            CASE WHEN ExpM.ChgWeight IS NOT NULL AND ExpM.ChgWeight > 0 THEN ExpM.ChgWeight
-								   WHEN ExpDW.VolWeight IS NOT NULL AND ExpDW.VolWeight> 0 THEN (ExpDW.VolWeight / 166)
-                                 ELSE (CASE WHEN (ExpBD.[Weight] / 600) < 0.01 THEN 0.01 ELSE (ExpBD.[Weight] / 600) END) 
-							END 
-	                      ) as volWeight 
+                        --,(
+                        --    CASE WHEN ExpM.ChgWeight IS NOT NULL AND ExpM.ChgWeight > 0 THEN ExpM.ChgWeight
+						--		   WHEN ExpDW.VolWeight IS NOT NULL AND ExpDW.VolWeight> 0 THEN (ExpDW.VolWeight / 166)
+                        --         ELSE (CASE WHEN (ExpBD.[Weight] / 600) < 0.01 THEN 0.01 ELSE (ExpBD.[Weight] / 600) END) 
+						--	END 
+	                    --  ) as volWeight 
 
                         FROM Exp_BuildupMaster as ExpBM
                         JOIN Exp_BuildUpDetail as ExpBD

@@ -222,7 +222,7 @@ namespace ExpMQManager.DAL
                         --    ELSE ( ExpBD.[Weight] / 166 ) END 
 	                    --    ) as volWeight 
                         
-                        -- added by Cecile. on 2018-5-18 9:29am
+                         added by Cecile. on 2018-5-18 9:29am
                         ,(
                             CASE WHEN ExpM.ChgWeight IS NOT NULL AND ExpM.ChgWeight > 0 THEN ExpM.ChgWeight
 								   WHEN ExpDW.VolWeight IS NOT NULL AND ExpDW.VolWeight> 0 THEN (ExpDW.VolWeight / 166)

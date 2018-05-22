@@ -242,6 +242,7 @@ C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQMana
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\bin\Debug\ExpMQManager.exe
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\bin\Debug\ExpMQManager.pdb
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\bin\Debug\amqmdnet.dll
+C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\obj\x86\Debug\ExpMQManager.csprojResolveAssemblyReference.cache
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\obj\x86\Debug\ExpMQManager.MQ_ManagerExp.resources
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\obj\x86\Debug\ExpMQManager.Properties.Resources.resources
 C:\NA\01 Engine\Engine_forNEWDB _NEWSERVER\ExpMQManager_NEWDB -forLive\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.GenerateResource.Cache
