@@ -203,11 +203,11 @@ namespace ExpMQManager
                             {
                                 if (msgType.ToUpper() == "FHL")
                                 {
-                                    msgReturn = baseMessage.doBuildUp(msgType, subType, hid, refID, flightSeq, queueid);
+                                    //msgReturn = baseMessage.doBuildUp(msgType, subType, hid, refID, flightSeq, queueid);
                                 }
                                 else
                                 {
-                                    msgReturn = baseMessage.doBuildUp(msgType, subType, mid, refID, flightSeq, queueid);
+                                    //msgReturn = baseMessage.doBuildUp(msgType, subType, mid, refID, flightSeq, queueid);
                                 }
                             }
 
