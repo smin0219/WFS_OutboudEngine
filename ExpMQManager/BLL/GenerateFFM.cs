@@ -67,9 +67,10 @@ namespace ExpMQManager.BLL
 
                 //Added on 7/1 request. do not round weights for air china 
                 // added. Ccode : IASKZDFW2, NCAJFK. 2016-02-11
+                // added on 2018-4-9 16:39 requested by Cecile, Ccode WFSEYJFK was added by Edward on request from Cecile, 3:50 PM on 2018-06-13
                 if (baseEntity.Ccode == "ARCHJFK" || baseEntity.Ccode == "IASKZDFW2" || baseEntity.Ccode == "NCAJFK"
                     || baseEntity.Ccode == "WFSSKBOS" || baseEntity.Ccode == "SASIAD" || baseEntity.Ccode == "SASEWR" || baseEntity.Ccode == "ARCHJFK1" // added on 2017-11-6. requested by Mike Serzo 11:46am
-                    || baseEntity.Ccode == "IASQRIAH")  // added on 2018-4-9 16:39 requested by Cecile
+                    || baseEntity.Ccode == "IASQRIAH" || baseEntity.Ccode == "WFSEYJFK")  
                     strAWB += msgEntity.shipmentIndicator + msgEntity.fPcs + "K" + msgEntity.fWeight.ToString("F1");
                 else
                 {

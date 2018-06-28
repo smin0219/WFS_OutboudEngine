@@ -49,18 +49,28 @@ namespace ExpMQManager.BLL
             strAWB += "/" + truncateString(msgEntity.shipperNm, 35).Replace('/', '-') + "\r\n";
             strAWB += "/" + truncateString(msgEntity.shipperAddr + msgEntity.shipperAddr2, 35).Replace('/', '-') + "\r\n";
             strAWB += "/" + truncateString(msgEntity.shipperCity, 17);
-            
+
             if (msgEntity.shipperState != "")
                 strAWB += "/" + truncateString(msgEntity.shipperState, 9);
-            
+
             strAWB += "\r\n";
+
             //strAWB += "/" + "US";
             strAWB += "/" + truncateString(msgEntity.shipperCountry == "" ? "US" : msgEntity.shipperCountry, 2);
 
             if (msgEntity.shipperZip != "")
                 strAWB += "/" + truncateString(msgEntity.shipperZip, 9);
 
+            if (!string.IsNullOrEmpty(msgEntity.shipperAddrTel))
+            {
+                if (msgEntity.shipperZip == "")
+                    strAWB += "/";
+
+                msgEntity.shipperAddrTel = string.Join("", msgEntity.shipperAddrTel.ToCharArray().Where(Char.IsDigit));
+                strAWB += "/TE/" + truncateString(msgEntity.shipperAddrTel, 25);
+            }
             strAWB += "\r\n";
+
 
             //CNE
             strAWB += "CNE" + "\r\n";
@@ -76,7 +86,16 @@ namespace ExpMQManager.BLL
             if (msgEntity.cneeZip != "")
                 strAWB += "/" + truncateString(msgEntity.cneeZip, 9);
 
-           strAWB += "\r\n";      //"/" + truncateString(msgEntity.shipperZip, 9) +
+            if (!string.IsNullOrEmpty(msgEntity.cneeAddrTel))
+            {
+                if (msgEntity.cneeZip == "")
+                    strAWB += "/";
+
+                msgEntity.cneeAddrTel = string.Join("", msgEntity.cneeAddrTel.ToCharArray().Where(Char.IsDigit));
+                strAWB += "/TE/" + truncateString(msgEntity.cneeAddrTel, 25);
+            }
+            strAWB += "\r\n";      //"/" + truncateString(msgEntity.shipperZip, 9) +
+
 
             //AGT
             strAWB += "AGT" + "/" + "/" + msgEntity.agentIATACd;
@@ -90,13 +109,13 @@ namespace ExpMQManager.BLL
                 }
                 catch { }
             }
-            strAWB +="\r\n";
+            strAWB += "\r\n";
             strAWB += "/" + truncateString(msgEntity.agentNm, 35) + "\r\n";
             strAWB += "/" + truncateString(msgEntity.agentCity, 17) + "\r\n";
 
 
             //2015-10-06 SSR
-            if(msgEntity.colnewDBSSR != null && msgEntity.colnewDBSSR.Count > 0)
+            if (msgEntity.colnewDBSSR != null && msgEntity.colnewDBSSR.Count > 0)
             {
                 if (msgEntity.colnewDBSSR.First().SSRtext != null && msgEntity.colnewDBSSR.First().SSRtext != string.Empty)
                 {
@@ -108,10 +127,38 @@ namespace ExpMQManager.BLL
                 }
             }
 
+            //NFY
+            if(!string.IsNullOrEmpty(msgEntity.nfyNm) && !string.IsNullOrEmpty(msgEntity.nfyAddr) && !string.IsNullOrEmpty(msgEntity.nfyPlace) && !string.IsNullOrEmpty(msgEntity.nfyCountry))
+            {
+                strAWB += "NFY/" + truncateString(msgEntity.nfyNm, 35) + "\r\n";
+                strAWB += "/" + truncateString(msgEntity.nfyAddr, 35) + "\r\n";
+
+                strAWB += "/" + truncateString(msgEntity.nfyPlace, 17);
+                if (!string.IsNullOrEmpty(msgEntity.nfyState))
+                    strAWB += "/" + truncateString(msgEntity.nfyState, 9);
+                strAWB += "\r\n";
+
+                strAWB += "/" + truncateString(msgEntity.nfyCountry, 2);
+
+                if(!string.IsNullOrEmpty(msgEntity.nfyZip))
+                    strAWB += "/" + truncateString(msgEntity.nfyZip, 9);
+
+                if (!string.IsNullOrEmpty(msgEntity.nfyAddrTel))
+                {
+                    if (string.IsNullOrEmpty(msgEntity.nfyZip))
+                        strAWB += "/";
+
+                    msgEntity.nfyAddrTel = string.Join("", msgEntity.nfyAddrTel.ToCharArray().Where(Char.IsDigit));
+                    strAWB += "/TE/" + truncateString(msgEntity.nfyAddrTel, 25);
+                }
+                strAWB += "\r\n";
+            }
+
+
             //CVD
             strAWB += "CVD" + "/" + msgEntity.currency + "/" + msgEntity.chargeCd + "/";
             strAWB += msgEntity.preChargeWeightCd + msgEntity.preChargeOtherCd + "/";
-            
+
             if (msgEntity.carriageVal == 0.00)
                 strAWB += "NVD" + "/";
             else
@@ -145,7 +192,7 @@ namespace ExpMQManager.BLL
                     {
                         strAWB += "/" + index++ + "/" + "P" + fwbRateEntity.pcsRTD + "/";
                         strAWB += "K" + string.Format("{0:0.0}", fwbRateEntity.weightRTD) + "/";
-                        if(fwbRateEntity.classRTD != null && fwbRateEntity.classRTD.Trim() != string.Empty)
+                        if (fwbRateEntity.classRTD != null && fwbRateEntity.classRTD.Trim() != string.Empty)
                             strAWB += "C" + fwbRateEntity.classRTD + "/";
                         strAWB += "W" + string.Format("{0:0.0}", fwbRateEntity.chargeWeight) + "/";
                         strAWB += "R" + string.Format("{0:0.00}", fwbRateEntity.rateCharge) + "/";
@@ -159,7 +206,7 @@ namespace ExpMQManager.BLL
                         }
                     }
                 }
-            #endregion
+                #endregion
             }
             else
             {
@@ -176,12 +223,12 @@ namespace ExpMQManager.BLL
                         {
                             strAWB += "/" + index++ + "/" + "P" + fwb_newDB_RTDEntity.pcsRTD + "/";
                             strAWB += "K" + string.Format("{0:0.0}", fwb_newDB_RTDEntity.weightRTD) + "/";
-                            if(fwb_newDB_RTDEntity.classRTD != null && fwb_newDB_RTDEntity.classRTD.Trim() != string.Empty)
+                            if (fwb_newDB_RTDEntity.classRTD != null && fwb_newDB_RTDEntity.classRTD.Trim() != string.Empty)
                                 strAWB += "C" + fwb_newDB_RTDEntity.classRTD + "/";
                             strAWB += "W" + string.Format("{0:0.0}", fwb_newDB_RTDEntity.chargeWeight) + "/";
 
                             string rateCharge = string.Format("{0:0.00}", fwb_newDB_RTDEntity.rateCharge);
-                            if(rateCharge.Length > 8)
+                            if (rateCharge.Length > 8)
                             {
                                 rateCharge = fwb_newDB_RTDEntity.rateCharge.ToString("G29");
                             }
@@ -199,13 +246,13 @@ namespace ExpMQManager.BLL
                         strAWB += "/" + "N" + fwbNGEntity.type + "/" + truncateString(fwbNGEntity.naturegoods, 20) + "\r\n";
                         ngIndex++;
                     }
-                } 
+                }
                 #endregion
             }
 
             // IF Turkish, NO DIM info. requested by Cecile on 2018-1-8. ==> HOLD.
             //if(msgEntity.Ccode != "TURKJFK" && msgEntity.Ccode != "X TURKIAH" && msgEntity.Ccode != "WFSTKIAD")
-            if(msgEntity.Ccode != "X TURKIAH")
+            if (msgEntity.Ccode != "X TURKIAH")
             {
                 // 2016-3-18. added. 
                 int cnt_volWeight = msgEntity.colVol.Where(x => x.volWeight > 0).Count();
@@ -275,14 +322,14 @@ namespace ExpMQManager.BLL
                     }
                 }
             } // IF NOT TURKISH airline. END.
-            
+
 
             //OTH
             if (msgEntity.colCharge != null && msgEntity.colCharge.Count > 0)
             {
                 index = 1;
                 //2017-12-21 OTH modified
-                foreach (FwbOtherChargeEntity fwbOtherChargeEntity in msgEntity.colCharge.Where(x=>x.chargeAmt > 0))
+                foreach (FwbOtherChargeEntity fwbOtherChargeEntity in msgEntity.colCharge.Where(x => x.chargeAmt > 0))
                 {
                     if (index == 1)
                         strAWB += "OTH";
@@ -296,10 +343,10 @@ namespace ExpMQManager.BLL
             }
             else
             {
-                if(msgEntity.colnewDBOTH != null && msgEntity.colnewDBOTH.Count > 0)
+                if (msgEntity.colnewDBOTH != null && msgEntity.colnewDBOTH.Count > 0)
                 {
                     int OTHindex = 1;
-                    foreach(Fwb_newDB_OTHEntity fwb_newDB_OTHEntity in msgEntity.colnewDBOTH.Where(x=>x.chargeAmt > 0))
+                    foreach (Fwb_newDB_OTHEntity fwb_newDB_OTHEntity in msgEntity.colnewDBOTH.Where(x => x.chargeAmt > 0))
                     {
                         if (OTHindex == 1)
                             strAWB += "OTH";
@@ -324,7 +371,7 @@ namespace ExpMQManager.BLL
                 {
                     strAWB += "COL";
                 }
-                
+
                 int tempcnt = 0;
                 if (msgEntity.colnewDBPPDCOL.TotalWeight != 0)
                 {
@@ -421,7 +468,27 @@ namespace ExpMQManager.BLL
             }
 
             //ISU
-            strAWB += "ISU" + "/" + msgDate + "/" + msgEntity.awbPlace +"\r\n";
+            strAWB += "ISU" + "/" + msgDate + "/" + msgEntity.awbPlace + "\r\n";
+
+            //OSI
+            if (msgEntity.colnewOSI != null && msgEntity.colnewOSI.Count() > 0)
+            {
+                index = 1;
+                foreach (Fwb_newDB_OSIEntity fwbOSIEntity in msgEntity.colnewOSI)
+                {
+                    if (index > 3)
+                        break;  // maximum 3 line
+
+                    if (!string.IsNullOrEmpty(fwbOSIEntity.OtherInfo))
+                    {
+                        if (index == 1)
+                            strAWB += "OSI";
+
+                        strAWB += "/" + truncateString(fwbOSIEntity.OtherInfo, 65) + "\r\n";
+                        index++;
+                    }
+                }
+            }
 
             //REF
             strAWB += "REF" + "/" + "JFKCDCR" + "\r\n";
@@ -469,7 +536,7 @@ namespace ExpMQManager.BLL
             //}
 
             //OCI
-            if(msgEntity.colOCI != null && msgEntity.colOCI.Count > 0)
+            if (msgEntity.colOCI != null && msgEntity.colOCI.Count > 0)
             {
                 index = 1;
                 foreach (FwbOCIEntity fwbOCIEntity in msgEntity.colOCI)
@@ -482,7 +549,7 @@ namespace ExpMQManager.BLL
             }
             else
             {
-                if(msgEntity.colnewDBOCI != null && msgEntity.colnewDBOCI.Count > 0 )
+                if (msgEntity.colnewDBOCI != null && msgEntity.colnewDBOCI.Count > 0)
                 {
                     if (msgEntity.colnewDBOCI.First().CustomsInfo != null && msgEntity.colnewDBOCI.First().CustomsInfo != string.Empty)
                     {

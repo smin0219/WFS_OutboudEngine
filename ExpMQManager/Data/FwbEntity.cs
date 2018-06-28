@@ -12,10 +12,11 @@ namespace ExpMQManager.Data
             //Empty Constructor
         }
 
-        public FwbEntity(BaseEntity baseEntity, string __shipperNm, string __shipperAddr, string __shipperAddr2,
-            string __shipperCity, string __shipperState, string __shipperCountry, string __shipperZip, string __cneeNm,
-            string __cneeAddr, string __cneeCity, string __cneeProv, string __cneeCountry,
-            string __cneeZip, string __agentNm, string __agentIATACd, string __agentCASSaddr, 
+        public FwbEntity(BaseEntity baseEntity,
+            string __shipperNm, string __shipperAddr, string __shipperAddr2, string __shipperCity, string __shipperState, string __shipperCountry, string __shipperZip, string __shipperAddrTel,
+            string __cneeNm, string __cneeAddr, string __cneeCity, string __cneeProv, string __cneeCountry, string __cneeZip, string __cneeAddrTel,
+            string __nfyNm, string __nfyAddr, string __nfyPlace, string __nfyState, string __nfyCountry, string __nfyZip, string __nfyAddrTel,
+            string __agentNm, string __agentIATACd, string __agentCASSaddr, 
             string __agentCity, string __currency, string __chargeCd, string __preChargeWeightCd, 
             string __preChargeOtherCd, double __carriageVal, double __customVal, double __insuranceVal, string __awbPlace, string __SHC) //, string[] __CountryCode, string[] __InfoId, string[] __CustomsId, string[] __CustomsInfo)
         {
@@ -43,16 +44,30 @@ namespace ExpMQManager.Data
             this.shipperState = __shipperState;
             this.shipperCountry = __shipperCountry;
             this.shipperZip = __shipperZip;
+            this.shipperAddrTel = __shipperAddrTel;
+
             this.cneeNm = __cneeNm;
             this.cneeAddr = __cneeAddr;
             this.cneeCity = __cneeCity;
             this.cneeProv = __cneeProv;
             this.cneeCountry = __cneeCountry;
             this.cneeZip = __cneeZip;
+            this.cneeAddrTel = __cneeAddrTel;
+
+            this.nfyNm = __nfyNm;
+            this.nfyAddr = __nfyAddr;
+            this.nfyPlace = __nfyPlace;
+            this.nfyState = __nfyState;
+            this.nfyCountry = __nfyCountry;
+            this.nfyZip = __nfyZip;
+            this.nfyAddrTel = __nfyAddrTel;
+
             this.agentNm = __agentNm;
             this.agentIATACd = __agentIATACd;
             this.agentCASSaddr = __agentCASSaddr;
             this.agentCity = __agentCity;
+
+
             this.currency = __currency;
             this.chargeCd = __chargeCd;
             this.preChargeWeightCd = __preChargeWeightCd;
@@ -118,6 +133,13 @@ namespace ExpMQManager.Data
             get { return _shipperZip; }
             set { _shipperZip = value; }
         }
+        private string _shipperAddrTel = "";
+        public string shipperAddrTel
+        {
+            get { return _shipperAddrTel; }
+            set { _shipperAddrTel = value; }
+        }
+        
 
         private string _cneeNm = "";
         public string cneeNm
@@ -160,6 +182,62 @@ namespace ExpMQManager.Data
             get { return _cneeZip; }
             set { _cneeZip = value; }
         }
+        private string _cneeAddrTel = "";
+        public string cneeAddrTel
+        {
+            get { return _cneeAddrTel; }
+            set { _cneeAddrTel = value; }
+        }
+
+
+        private string _nfyNm = "";
+        public string nfyNm
+        {
+            get { return _nfyNm; }
+            set { _nfyNm = value; }
+        }
+
+        private string _nfyAddr = "";
+        public string nfyAddr
+        {
+            get { return _nfyAddr; }
+            set { _nfyAddr = value; }
+        }
+
+        private string _nfyPlace = "";
+        public string nfyPlace
+        {
+            get { return _nfyPlace; }
+            set { _nfyPlace = value; }
+        }
+
+        private string _nfyState = "";
+        public string nfyState
+        {
+            get { return _nfyState; }
+            set { _nfyState = value; }
+        }
+
+        private string _nfyCountry = "";
+        public string nfyCountry
+        {
+            get { return _nfyCountry; }
+            set { _nfyCountry = value; }
+        }
+
+        private string _nfyZip = "";
+        public string nfyZip
+        {
+            get { return _nfyZip; }
+            set { _nfyZip = value; }
+        }
+        private string _nfyAddrTel = "";
+        public string nfyAddrTel
+        {
+            get { return _nfyAddrTel; }
+            set { _nfyAddrTel = value; }
+        }
+
 
         private string _agentNm = "";
         public string agentNm
@@ -368,7 +446,7 @@ namespace ExpMQManager.Data
             }
         }
 
-        //2015-10-06 new PPD
+        //2015-10-06 new _PPD
         private Fwb_newDB_PPDCOLEntity _colnewDBPPDCOL = default(Fwb_newDB_PPDCOLEntity);
         public Fwb_newDB_PPDCOLEntity colnewDBPPDCOL
         {
@@ -381,7 +459,7 @@ namespace ExpMQManager.Data
             }
         }
 
-        //2105-10-21 added SHC
+        //2015-10-21 added _SHC
         private List<Fwb_newDB_SHCEntity> _colnewDBSHC = default(List<Fwb_newDB_SHCEntity>);
         public List<Fwb_newDB_SHCEntity> colnewSHC
         {
@@ -391,6 +469,19 @@ namespace ExpMQManager.Data
                     _colnewDBSHC = new List<Fwb_newDB_SHCEntity>();
 
                 return _colnewDBSHC;
+            }
+        }
+
+        //2018-05-30 added _OSI
+        private List<Fwb_newDB_OSIEntity> _colnewDBOSI = default(List<Fwb_newDB_OSIEntity>);
+        public List<Fwb_newDB_OSIEntity> colnewOSI
+        {
+            get
+            {
+                if (_colnewDBOSI == default(List<Fwb_newDB_OSIEntity>))
+                    _colnewDBOSI = new List<Fwb_newDB_OSIEntity>();
+
+                return _colnewDBOSI;
             }
         }
 

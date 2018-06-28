@@ -30,8 +30,6 @@ namespace ExpMQManager
                 {
                     strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid = 9060349 ";
-
-
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
                     //            where iid in (16613038)";
 
@@ -43,22 +41,10 @@ namespace ExpMQManager
                 }
                 else
                 {
-                    //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype <> 'Email' order by iid desc";
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4345351)";
 
-                    //                    strSql = @"select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
-                    //                                from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) order by iid desc";
-                    strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG
-                                from EDI_Msg_Queue where iid in (4345334)";
+                    //ZRHFMLX JFKCTCR czhao@casusa.com ckim@casusa.comstrSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= CONVERT (date, GETDATE()) and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
 
-                    //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-2-5' and Msgtype <> 'Email' ";
-
-                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-5-14' and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
-                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid = 4345113 ";
-
-                    //strSql = @"select * from EDI_Msg_Queue where Status = 'W' and createddate >= DATEADD(D, 0, DATEDIFF(D, 0, GETDATE())) and Msgtype = 'Email' and submsgtype = 'TTN' order by iid desc";
-
-                    //                    strSql = @" select iid, MsgType, subMsgType, MID, HID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG 
-                    //                                from EDI_Msg_Queue where MsgType = 'FBR' and createddate >= '2016-05-02 14:50'";
                 }
 
                 DataTable dt = baseDB.GetSqlDataTable(strSql);
@@ -88,6 +74,7 @@ namespace ExpMQManager
                     try { EDIAddressBook = Convert.ToInt32(dr["EDIAddressBook"].ToString().Trim()); }
                     catch { }
                     string CustomerId = dr["CustomerId"].ToString().Trim();
+
                     string MsgBody_SITA = dr["MsgBody_SITAfreeMSG"].ToString();
                     string MsgAddress_SITA = dr["MsgAddress_SITAfreeMSG"].ToString();
 
@@ -120,6 +107,7 @@ namespace ExpMQManager
                                     case "ARR":
                                         baseMessage = new GenerateRCF();
                                         break;
+
 
                                     // added for realtime RCF. 2018-1-11
                                     case "DIS":
@@ -178,9 +166,9 @@ namespace ExpMQManager
 
                             if (msgType.ToUpper() == "UWS")
                                 baseMessage = new GeneratwUWS();
-                        }
-                        #endregion
 
+                            #endregion
+                        }
 
                         if (baseMessage != null)
                         {
@@ -234,11 +222,6 @@ namespace ExpMQManager
 
                                 foreach (string msg in arrMsg)
                                 {
-                                    if (ValidationUtil.isThereSitaReciever(msg))
-                                    {
-                                        string test = "good";
-                                    }
-
                                     if (isLive)
                                     {
                                         if (ValidationUtil.isThereSitaReciever(msg))
@@ -325,7 +308,9 @@ namespace ExpMQManager
                                             else
                                             {
                                                 baseMessage.msgDestAddrEmail = "nacs.wfs@cargoquality.com";
+                                                
                                             }
+                                            //baseMessage.msgDestAddrEmail += ";cpark@wfs.aero";
                                         }
                                     }
 
@@ -367,7 +352,7 @@ namespace ExpMQManager
                                             int emailStatus = 1;
                                             try
                                             {
-                                                bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj);
+                                                bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
                                                 if (!mailSent)
                                                 {
                                                     email.UpdateQueue(queueid, "S", "Error sending email!");
@@ -385,7 +370,7 @@ namespace ExpMQManager
                                         }
                                         else
                                         {
-                                            bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj);
+                                            bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
                                         }
                                     }
                                 }

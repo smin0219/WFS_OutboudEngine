@@ -138,6 +138,7 @@
     <Compile Include="Data\FwbNGEntity.cs" />
     <Compile Include="Data\FwbOCIEntity.cs" />
     <Compile Include="Data\Fwb_newDB_OCIEntity.cs" />
+    <Compile Include="Data\Fwb_newDB_OSIEntity.cs" />
     <Compile Include="Data\Fwb_newDB_OTHEntity.cs" />
     <Compile Include="Data\Fwb_newDB_PPDCOLEntity.cs" />
     <Compile Include="Data\Fwb_newDB_RTDEntity.cs" />

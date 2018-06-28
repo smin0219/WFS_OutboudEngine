@@ -92,14 +92,16 @@ namespace ExpMQManager
                 }
 
                 m.Subject = Subject;
-                m.Body = Msg;
+                
                 if (needHTMLFormat)
                 {
                     m.IsBodyHtml = true;
+                    m.Body = Msg.Replace("\r\n", "<br />");
                 }
                 else
                 {
                     m.IsBodyHtml = false;
+                    m.Body = Msg;
                 }
 
                 smtp.Send(m);

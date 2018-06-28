@@ -15,8 +15,10 @@ namespace ExpMQManager.DAL
 
             string strSql = "";
             strSql = @"  SELECT MID ,Shipper ,ShpAddr ,ShpAddr2 ,ShpAddrCity 
-	                           ,ShpAddrState ,ShpAddrCountry ,ShpAddrZipcode ,Cnee ,CneeAddr ,CneeAddrCity
-	                           ,CneeAddrProvince ,CneeAddrCountry ,CneeAddrZipcode ,Replace(AgentName,'''','') AgentName ,AgentCode
+	                           ,ShpAddrState ,ShpAddrCountry ,ShpAddrZipcode, ShipperTel
+                               ,Cnee ,CneeAddr ,CneeAddrCity,CneeAddrProvince ,CneeAddrCountry ,CneeAddrZipcode, CneeTel
+                               ,NfyName, NfyAddr, NfyPlace, NfyState, NfyCountry, NfyZipcode, NfyTel
+                               ,Replace(AgentName,'''','') AgentName ,AgentCode
 	                           ,AgentCity ,Currency ,WTVAL ,WTVAL2 ,WTVAL3 ,DVCarriage 
 	                           ,DVCustoms ,Insurance ,AgentCassAddr
                                 ,
@@ -178,13 +180,22 @@ namespace ExpMQManager.DAL
             fwbEntity = AddPPDFromReader(fwbEntity, ExecuteReader(strSql));
 
 
-//            //SHC added. 2015-10-21
-//            strSql = @"
-//                    SELECT CASE WHEN UPPER(SHC) = 'OTHER' THEN SHCnote ELSE SHC END as SHC,
-//                            SHC2, SHC3, SHC4, SHC5, SHC6, SHC7, SHC8, SHC9 FROM Exp_Master WHERE MID = {0}
-//                    ";
-//            strSql = string.Format(strSql, mid);
-//            fwbEntity = AddSHCFromReader(fwbEntity, ExecuteReader(strSql));
+            //            //SHC added. 2015-10-21
+            //            strSql = @"
+            //                    SELECT CASE WHEN UPPER(SHC) = 'OTHER' THEN SHCnote ELSE SHC END as SHC,
+            //                            SHC2, SHC3, SHC4, SHC5, SHC6, SHC7, SHC8, SHC9 FROM Exp_Master WHERE MID = {0}
+            //                    ";
+            //            strSql = string.Format(strSql, mid);
+            //            fwbEntity = AddSHCFromReader(fwbEntity, ExecuteReader(strSql));
+
+
+
+            //2018-05-30. OSI
+            strSql = @"
+                        SELECT * FROM Exp_Master_OSI WHERE MID = {0} ORDER BY Seq
+                    ";
+            strSql = string.Format(strSql, mid);
+            fwbEntity = AddOSIFromReader(fwbEntity, ExecuteReader(strSql));
 
             return fwbEntity;
         }
@@ -216,12 +227,24 @@ namespace ExpMQManager.DAL
                     reader["ShpAddrState"].ToString().Trim(),
                     reader["ShpAddrCountry"].ToString().Trim(),
                     reader["ShpAddrZipcode"].ToString().Trim(),
+                    reader["ShipperTel"].ToString().Trim(),
+
                     reader["Cnee"].ToString().Trim(),
                     reader["CneeAddr"].ToString().Trim(),
                     reader["CneeAddrCity"].ToString().Trim(),
                     reader["CneeAddrProvince"].ToString().Trim(),
                     reader["CneeAddrCountry"].ToString().Trim(),
                     reader["CneeAddrZipcode"].ToString().Trim(),
+                    reader["CneeTel"].ToString().Trim(),
+
+                    reader["NfyName"].ToString().Trim(),
+                    reader["NfyAddr"].ToString().Trim(),
+                    reader["NfyPlace"].ToString().Trim(),
+                    reader["NfyState"].ToString().Trim(),
+                    reader["NfyCountry"].ToString().Trim(),
+                    reader["NfyZipcode"].ToString().Trim(),
+                    reader["NfyTel"].ToString().Trim(),
+
                     reader["AgentName"].ToString().Trim(),
                     reader["AgentCode"].ToString().Trim(),
                     reader["AgentCassAddr"].ToString().Trim(),
@@ -513,7 +536,6 @@ namespace ExpMQManager.DAL
             return fwbEntity;
         }
 
-        //2015-10-06 _SSR
         public FwbEntity AddPPDFromReader(FwbEntity fwbEntity, IDataReader reader)
         {
             if (reader.Read())
@@ -561,6 +583,7 @@ namespace ExpMQManager.DAL
             disConnect_dbcn_ExcuteReader();
             return fwbEntity;
         }
+
         public FwbEntity AddSHCFromReader(FwbEntity fwbEntity, IDataReader reader)
         {
             if (reader.Read())
@@ -630,6 +653,23 @@ namespace ExpMQManager.DAL
                 }
             }
 
+            reader.Close();
+            reader.Dispose();
+            disConnect_dbcn_ExcuteReader();
+            return fwbEntity;
+        }
+
+        //2018-05-30 _OSI
+        public FwbEntity AddOSIFromReader(FwbEntity fwbEntity, IDataReader reader)
+        {
+            while (reader.Read())
+            {
+                Fwb_newDB_OSIEntity Fwb_newDB_OSIEntity = new Fwb_newDB_OSIEntity(
+                    reader["o_othersinfo"].ToString()
+                    );
+
+                fwbEntity.colnewOSI.Add(Fwb_newDB_OSIEntity);
+            }
             reader.Close();
             reader.Dispose();
             disConnect_dbcn_ExcuteReader();
