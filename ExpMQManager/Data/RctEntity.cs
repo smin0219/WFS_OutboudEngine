@@ -12,7 +12,7 @@ namespace ExpMQManager.Data
             //Empty Constructor
         }
 
-        public RctEntity(BaseEntity baseEntity, DateTime __rcsTime, string __cnee)
+        public RctEntity(BaseEntity baseEntity, DateTime __rcsTime, string __cnee, string __carrier)
         {
             this.queueId = baseEntity.queueId;
             this.msgType = baseEntity.msgType;
@@ -37,6 +37,7 @@ namespace ExpMQManager.Data
             //Derived Class member
             this.rcsTime = __rcsTime;
             this.cnee = __cnee;
+            this.carrier = __carrier;
 
             this.forigin = baseEntity.forigin;
         }

@@ -41,10 +41,8 @@ namespace ExpMQManager
                 }
                 else
                 {
-                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4345351)";
-
-                    //ZRHFMLX JFKCTCR czhao@casusa.com ckim@casusa.comstrSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= CONVERT (date, GETDATE()) and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
-
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4345468)";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-6-28' and (Msgtype <> 'Email' or SubMsgType = 'TTN')  ";
                 }
 
                 DataTable dt = baseDB.GetSqlDataTable(strSql);
@@ -210,7 +208,7 @@ namespace ExpMQManager
                                     msgReturn = baseMessage.doBuildUp(msgType, subType, mid, refID, flightSeq, queueid);
                                 }
                             }
-
+                            
                             if (msgReturn != "")
                             {
                                 /* 2014-04-14
@@ -239,31 +237,15 @@ namespace ExpMQManager
 
                                     if (result.IndexOf("successful") > 0)
                                     {
-                                        if (isLive)
-                                        {
-                                            baseMessage.UpdateQueue(queueid, "S", "");
+                                        baseMessage.UpdateQueue(queueid, "S", "");
 
-                                            //added. 2015-12-14
-                                            if (MsgBody_SITA != null && MsgBody_SITA != string.Empty)
-                                            {
-                                                baseMessage.InsertLogforFreeSITAmsg(queueid, msg);
-                                            }
-                                            else
-                                                baseMessage.InsertLog(queueid, msg, msgType, subType);
+                                        //added. 2015-12-14
+                                        if (MsgBody_SITA != null && MsgBody_SITA != string.Empty)
+                                        {
+                                            baseMessage.InsertLogforFreeSITAmsg(queueid, msg);
                                         }
                                         else
-                                        {
-                                            baseMessage.UpdateQueue(queueid, "S", "");
-                                            //added. 2015-12-14
-                                            if (MsgBody_SITA != null && MsgBody_SITA != string.Empty)
-                                            {
-                                                baseMessage.InsertLogforFreeSITAmsg(queueid, msg);
-                                            }
-                                            else
-                                            {
-                                                baseMessage.InsertLog(queueid, msg, msgType, subType);
-                                            }
-                                        }
+                                            baseMessage.InsertLog(queueid, msg, msgType, subType);
 
                                         //added. 2015-12-14
                                         if (MsgBody_SITA != null && MsgBody_SITA != string.Empty)
@@ -308,16 +290,17 @@ namespace ExpMQManager
                                             else
                                             {
                                                 baseMessage.msgDestAddrEmail = "nacs.wfs@cargoquality.com";
-                                                
+
                                             }
                                             //baseMessage.msgDestAddrEmail += ";cpark@wfs.aero";
                                         }
                                     }
 
+                                    // for test email
                                     if (!isLive)
                                     {
                                         //baseMessage.msgDestAddrEmail = "cpark@wfs.aero;";
-                                        baseMessage.msgDestAddrEmail = "";
+                                        baseMessage.msgDestAddrEmail = "email address will be added before sending email";
                                     }
 
                                     if (baseMessage.msgDestAddrEmail != "")
@@ -346,31 +329,25 @@ namespace ExpMQManager
                                         {
                                             emailSubj = msgType.ToUpper() + " message";
                                         }
-                                        if (isLive)
+
+                                        GenerateEmail email = new GenerateEmail(); 
+                                        int emailStatus = 1;
+                                        try
                                         {
-                                            GenerateEmail email = new GenerateEmail();
-                                            int emailStatus = 1;
-                                            try
-                                            {
-                                                bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
-                                                if (!mailSent)
-                                                {
-                                                    email.UpdateQueue(queueid, "S", "Error sending email!");
-                                                    emailStatus = 255;
-                                                    email.UpdateEmailQueue(mid, emailStatus);
-                                                }
-                                            }
-                                            catch (Exception e)
+                                            bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
+                                            if (!mailSent)
                                             {
                                                 email.UpdateQueue(queueid, "S", "Error sending email!");
                                                 emailStatus = 255;
                                                 email.UpdateEmailQueue(mid, emailStatus);
-                                                buildLog(queueid, e.Message, e.StackTrace);
                                             }
                                         }
-                                        else
+                                        catch (Exception e)
                                         {
-                                            bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
+                                            email.UpdateQueue(queueid, "S", "Error sending email!");
+                                            emailStatus = 255;
+                                            email.UpdateEmailQueue(mid, emailStatus);
+                                            buildLog(queueid, e.Message, e.StackTrace);
                                         }
                                     }
                                 }
@@ -379,7 +356,7 @@ namespace ExpMQManager
                             baseMessage.msgDestAddrEmail = "";
                         }
                     }
-
+   
                     //Email Sending 
                     #region Sending Email
                     if (msgType.ToUpper() == "EMAIL")

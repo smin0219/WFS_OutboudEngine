@@ -58,15 +58,42 @@ namespace ExpMQManager.BLL
 
 
             /*
-             *  That is what we default for all carriers in the RCT message
-             *  Actually for these messages it is supposed to contain the two letter code for the carrier that the AWB is received from.
-             *  This is a problem from many years ago
-             *  These messages for el al require a LA in place of the XD
-             *  Lets talk about tomorrow to see if we can put a patch on this -- Michael Serzo
-             * 
+             *   From: Cecile Kim 
+             *   Sent: Wednesday, June 27, 2018 11:02 AM
+             *   To: Alinxsoft <Alinxsoft@wfs.aero>
+             *   Cc: Chuck Zhao <czhao@wfs.aero>; Michael Serzo <mserzo@wfs.aero>; David Johnson <david.johnson@wfs.aero>
+             *   Subject: RCT
+             *
+             *   Alinx,
+             *
+             *   Please remove hardcoding of XD from RCT message carrier code section to Customer_Carrier.IsMain=’Y’ carrier code.
+             *   Please treat this as an urgent matter since our RCT message is failing. (If Customer_Carrier.IsMain=='N', XD as default)
+             *   Thank you.
+             *
              **/
 
-            strAWB += subType.ToUpper() + "/" + "XD" + "/" + rcsTime + "/" + msgEntity.forigin + "/" + shipmentCode +
+
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+
+            string carrier = "";
+
+            if (!string.IsNullOrEmpty(msgEntity.carrier))
+            {
+                carrier = msgEntity.carrier;
+            }
+            else
+            {
+                throw new Exception("There is no main carrier code");
+            }
+
+            strAWB += subType.ToUpper() + "/" + carrier + "/" + rcsTime + "/" + msgEntity.forigin + "/" + shipmentCode +
                         msgEntity.pcs + "K" + weightFormatted;
 
             //if (cnee.ToString() != "")
