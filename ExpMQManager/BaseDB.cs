@@ -165,51 +165,34 @@ namespace ExpMQManager
         public static string getConnectionString()
         {
             string connectionString = "";
-            if (isLive)
+
+            // read XML
+            // 1. get xml file path
+            // 2. xml read
+            // 3. get DB info from XML file
+            // 4. connection string.
+
+            string DBserver = "";
+            string DataBase = "";
+            string ID = "";
+            string PW = "";
+
+            string xmlFile = "../DBInfo.xml";
+
+            DataSet dataSet = new DataSet();
+            try { dataSet.ReadXml(xmlFile, XmlReadMode.InferSchema); } catch { }
+
+            if (dataSet.Tables != null && dataSet.Tables.Count > 0)
             {
-                //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=casnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
-                //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=testcasnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
-                //connectionString = "Data Source=IO3003DBT1;Initial Catalog=casnet;User ID=OutboundEngine;Password=outengine2015;MultipleActiveResultSets=True";
-                connectionString = "Data Source=IO3003DBT1;Initial Catalog=casnet;User ID=OutboundEngine;Password=outengine2015;MultipleActiveResultSets=True";
-            }
-            else
-            {
-                //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=casnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
-                //connectionString = "Data Source=jfk261db.casusa.com;Initial Catalog=testcasnet;User ID=casnet;Password=Cas2007;MultipleActiveResultSets=True";
-                //connectionString = "Data Source=IO3003DBT1;Initial Catalog=casnet;User ID=OutboundEngine;Password=outengine2015;MultipleActiveResultSets=True";
-                
-                
-                
-                //connectionString = "Data Source=IO3003DBTDEV;Initial Catalog=testcasnet;User ID=testepic;Password=epic2017;MultipleActiveResultSets=True";
-
-                // read XML
-                // 1. get xml file path
-                // 2. xml read
-                // 3. get DB info from XML file
-                // 4. connection string.
-
-                string DBserver = "";
-                string DataBase = "";
-                string ID = "";
-                string PW = "";
-
-                string xmlFile = "../DBInfo.xml";
-
-                DataSet dataSet = new DataSet();
-                try { dataSet.ReadXml(xmlFile, XmlReadMode.InferSchema); } catch { }
-
-                if (dataSet.Tables != null && dataSet.Tables.Count > 0)
+                foreach (DataTable table in dataSet.Tables)
                 {
-                    foreach (DataTable table in dataSet.Tables)
-                    {
-                        DBserver = table.Rows[0]["Source"].ToString();
-                        DataBase = table.Rows[0]["Database"].ToString();
-                        ID = table.Rows[0]["ID"].ToString();
-                        PW = table.Rows[0]["PW"].ToString();
-                    }
-
-                    connectionString = string.Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3};MultipleActiveResultSets=True;", DBserver, DataBase, ID, PW);
+                    DBserver = table.Rows[0]["Source"].ToString();
+                    DataBase = table.Rows[0]["Database"].ToString();
+                    ID = table.Rows[0]["ID"].ToString();
+                    PW = table.Rows[0]["PW"].ToString();
                 }
+
+                connectionString = string.Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3};MultipleActiveResultSets=True;", DBserver, DataBase, ID, PW);
             }
 
             return connectionString;

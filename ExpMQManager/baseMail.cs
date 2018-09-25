@@ -27,31 +27,40 @@ namespace ExpMQManager
             try
             {
                 string _serverIP = "";
-                int _serverPort = 25;
+                int _serverPort = 587;
                 string _emailSender = "";
+                string _serverID = "";
+                string _serverPassword = "";
 
                 try
                 {
-                    // changed. get info from ServerInfo talbe. 2017-01-6
+
+                    /**
+                     * Commented and re-written by Jacob Min on 07/30/2018
+                     * Getting server info from AWS database (serverinfo)
+                     */
 
                     isLiveParsing = Convert.ToBoolean(ConfigurationManager.AppSettings["IsLiveParsing"]);
                     _serverIP = ServerInfoDAC.Instance.ServerIP;
-                    try { _serverPort = Convert.ToInt32(ServerInfoDAC.Instance.ServerPort); } catch { _serverPort = 25; }
+                    _serverPort = Convert.ToInt32(ServerInfoDAC.Instance.ServerPort);
                     _emailSender = ServerInfoDAC.Instance.SenderEmail;
+                    _serverID = ServerInfoDAC.Instance.ServerID;
+                    _serverPassword = ServerInfoDAC.Instance.ServerPassword;
 
-                    if (_serverIP.Equals("") || _serverIP == null)
-                    {
-                        _serverIP = Convert.ToString(ConfigurationManager.AppSettings["EmailServerIP"]);
-                        _emailSender = "epicSupport@wfs.aero";
-                    }
+                    // changed. get info from ServerInfo talbe. 2017-01-6
+                    // _serverIP = ServerInfoDAC.Instance.ServerIP;
+                    //try { _serverPort = Convert.ToInt32(ServerInfoDAC.Instance.ServerPort); } catch { _serverPort = 587; }
+                    //_emailSender = ServerInfoDAC.Instance.SenderEmail;
+
+                    //if (_serverIP.Equals("") || _serverIP == null)
+                    //{
+                    //    _serverIP = Convert.ToString(ConfigurationManager.AppSettings["EmailServerHostname"]);
+                    //    _emailSender = "ePic@wfs.aero";
+                    //}
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    //_serverIP = "10.3.0.71";
-
-                    _serverIP = "192.168.188.68";
-                    _serverPort = 25;
-                    _emailSender = "epicSupport@wfs.aero";
+                    Console.WriteLine(e);
                 }
 
                 SmtpClient smtp = new SmtpClient(_serverIP, _serverPort);
@@ -91,8 +100,15 @@ namespace ExpMQManager
                     //m.To.Add(new MailAddress("epic@wfs.aero"));
                 }
 
+                //Optional
+                if (_serverID != null && _serverID != "")
+                {
+                    smtp.Credentials = new NetworkCredential(_serverID, _serverPassword);
+                    smtp.EnableSsl = true;
+                }
+
                 m.Subject = Subject;
-                
+
                 if (needHTMLFormat)
                 {
                     m.IsBodyHtml = true;

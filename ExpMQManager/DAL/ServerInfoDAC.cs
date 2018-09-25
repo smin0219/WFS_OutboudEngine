@@ -11,10 +11,10 @@ namespace ExpMQManager.DAL
     {
         private static ServerInfoDAC instance;
 
-        
+
         private ServerInfoDAC()
-        { 
-            string sql = @"select TOP 1 ServerIP,ServerPort, SenderEmail from ServerInfo where ServerName = 'Email' and GETDATE() between StartDate and EndDate";
+        {
+            string sql = @"select ServerIP, ServerPort, SenderEmail, ServerID, ServerPassword from ServerInfo where ServerName = 'ePicEmail'";
             DataTable dbServerInfo = GetSqlDataTable(sql);
             if (dbServerInfo != null)
             {
@@ -23,6 +23,8 @@ namespace ExpMQManager.DAL
                     ServerIP = dbServerInfo.Rows[0]["ServerIP"].ToString();
                     ServerPort = dbServerInfo.Rows[0]["ServerPort"].ToString();
                     SenderEmail = dbServerInfo.Rows[0]["SenderEmail"].ToString();
+                    ServerID = dbServerInfo.Rows[0]["ServerID"].ToString();
+                    ServerPassword = dbServerInfo.Rows[0]["ServerPassword"].ToString();
                 }
                 catch (Exception ex)
                 {
@@ -33,7 +35,9 @@ namespace ExpMQManager.DAL
         public string ServerIP { get; set; }
         public string ServerPort { get; set; }
         public string SenderEmail { get; set; }
-        
+        public string ServerID { get; set; }
+        public string ServerPassword { get; set; }
+
         public static ServerInfoDAC Instance
         {
             get

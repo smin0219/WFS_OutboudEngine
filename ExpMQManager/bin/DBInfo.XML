@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DBConnect>
-  <Source>IO3003DBTDEV</Source>
-  <Database>testcasnet</Database>
+  <Source>AWSDBTDEVTEST.CBM6O5ETSQD1.US-EAST-1.RDS.AMAZONAWS.COM</Source>
+  <Database>TestCasnet</Database>
   <ID>testepic</ID>
   <PW>epic2017</PW>
   <Source_TempDB>IO3003DBT2</Source_TempDB>
