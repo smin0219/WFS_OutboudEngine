@@ -308,7 +308,6 @@ C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\bin
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.exe
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.pdb
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\bin\Debug\amqmdnet.dll
-C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csprojAssemblyReference.cache
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.MQ_ManagerExp.resources
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.Properties.Resources.resources
 C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.GenerateResource.cache

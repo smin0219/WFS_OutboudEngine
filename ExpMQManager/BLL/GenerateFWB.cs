@@ -40,7 +40,7 @@ namespace ExpMQManager.BLL
 
             //strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier + "\r\n";    // original.
             strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier;
-            if (msgEntity.carrier == "BA" && msgEntity.destFlight != msgEntity.dest)
+            if ((msgEntity.carrier == "BA" || msgEntity.carrier == "SK") && msgEntity.destFlight != msgEntity.dest)
                 strAWB += "/" + msgEntity.dest + msgEntity.carrier;
             strAWB += "\r\n";
 

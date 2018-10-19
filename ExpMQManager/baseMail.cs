@@ -66,31 +66,33 @@ namespace ExpMQManager
                 SmtpClient smtp = new SmtpClient(_serverIP, _serverPort);
                 MailMessage m = new MailMessage();
                 m.From = new MailAddress(_emailSender, "Worldwide Flight Services");
-                if (isLiveParsing)
+                //if (isLiveParsing)
+                //{
+                if (sAddress.IndexOf(";") > -1)
                 {
-                    if (sAddress.IndexOf(";") > -1)
+                    string[] result = sAddress.Split(';');
+                    string msAddress = "";
+                    for (int i = 0; i < result.Length; i++)
                     {
-                        string[] result = sAddress.Split(';');
-                        string msAddress = "";
-                        for (int i = 0; i < result.Length; i++)
-                        {
-                            msAddress = result[i].ToString();
-                            if (msAddress != null && msAddress != string.Empty)
-                                m.To.Add(new MailAddress(msAddress));
-                        }
+                        msAddress = result[i].ToString();
+                        if (msAddress != null && msAddress != string.Empty)
+                            m.To.Add(new MailAddress(msAddress));
                     }
-                    else
-                        m.To.Add(new MailAddress(sAddress));
                 }
                 else
                 {
-                    m.To.Add("ckim@wfs.aero");
-                    m.To.Add("mserzo@wfs.aero");
-                    m.To.Add("czhao@wfs.aero");
-                    m.To.Add("david.johnson@wfs.aero");
-                    m.To.Add("gwen.schulze@wfs.aero");
-                    m.To.Add("jacob.min@wfs.aero");
-                }
+                    m.To.Add(new MailAddress(sAddress));
+                }  
+                //}
+                //else
+                //{
+                //    m.To.Add("ckim@wfs.aero");
+                //    m.To.Add("mserzo@wfs.aero");
+                //    m.To.Add("czhao@wfs.aero");
+                //    m.To.Add("david.johnson@wfs.aero");
+                //    m.To.Add("gwen.schulze@wfs.aero");
+                //    m.To.Add("jacob.min@wfs.aero");
+                //}
 
                 // for monitoring
                 if (!(Subject.IndexOf("SMT_") > -1))
