@@ -31,6 +31,7 @@ namespace ExpMQManager.Data
             this.prefix = baseEntity.prefix;
             this.awb = baseEntity.awb;
             this.origin = baseEntity.origin;
+            this.originFlight = baseEntity.originFlight;
             this.dest = baseEntity.dest;
             this.destFlight = baseEntity.destFlight;
             this.pcs = baseEntity.pcs;

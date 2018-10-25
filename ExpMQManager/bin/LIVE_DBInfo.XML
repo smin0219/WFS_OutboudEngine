@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DBConnect>
+  <Source>awsdbt1.cbm6o5etsqd1.us-east-1.rds.amazonaws.com</Source>
+  <Database>casnet</Database>
+  <ID>epicengine</ID>
+  <PW>epic2017</PW>
+  <Source_TempDB>awsdbt1.cbm6o5etsqd1.us-east-1.rds.amazonaws.com</Source_TempDB>
+  <Database_TempDB>casnet</Database_TempDB>
+  <ID_TempDB>epicengine</ID_TempDB>
+  <PW_TempDB>epic2017</PW_TempDB>
+</DBConnect>

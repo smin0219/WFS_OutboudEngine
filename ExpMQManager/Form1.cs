@@ -54,7 +54,6 @@ namespace ExpMQManager
             String val,
             String filePath);
 
-
         public MQ_ManagerExp()
         {
             InitializeComponent();
@@ -83,8 +82,6 @@ namespace ExpMQManager
             int i = GetPrivateProfileString(Section, Key, "", temp, 2000, Application.StartupPath + @"\MQ.ini");
             //int i = GetPrivateProfileString(Section, Key, "", temp, 2000, avsPath);
 
-
-
             return temp.ToString();
 
         }
@@ -95,8 +92,6 @@ namespace ExpMQManager
             //WritePrivateProfileString(Section, Key, Value, avsPath);
             WritePrivateProfileString(Section, Key, Value, Application.StartupPath + @"\MQ.ini");
         }
-
-
 
         public void readiniM()
         {

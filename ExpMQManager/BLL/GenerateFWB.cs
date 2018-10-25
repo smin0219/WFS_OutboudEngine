@@ -19,7 +19,6 @@ namespace ExpMQManager.BLL
 
         public string buildUpFWB(FwbEntity msgEntity, string msgType, string subType)
         {
-
             //TIMEZONE UPDATE TEST ==> HOLD!!!
             //int timezone = getEXPTimezone(msgEntity.mid, null);
 
@@ -34,12 +33,18 @@ namespace ExpMQManager.BLL
 
             char shipmentCode = replaceShipmentIndicator(msgEntity.shipmentIndicator[0]);
 
-            //RTG 
+            //RTG
 
-            // added. if Exp_Master.AWBPOU <> Exp_Master.Dest then add RTG. requested by Cecile 2017-12-13 10:46AM
-
-            //strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier + "\r\n";    // original.
-            strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier;
+            #region This code has been added that requested by Michael on October 24 (10:14 AM)
+            if(msgEntity.origin != msgEntity.originFlight)
+            {
+                strAWB += "RTG" + "/" + msgEntity.originFlight + msgEntity.carrier + "/" + msgEntity.destFlight + msgEntity.carrier;
+            }
+            else
+            {
+                strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier;
+            }
+            #endregion
             if ((msgEntity.carrier == "BA" || msgEntity.carrier == "SK") && msgEntity.destFlight != msgEntity.dest)
                 strAWB += "/" + msgEntity.dest + msgEntity.carrier;
             strAWB += "\r\n";
@@ -70,7 +75,6 @@ namespace ExpMQManager.BLL
                 strAWB += "/TE/" + truncateString(msgEntity.shipperAddrTel, 25);
             }
             strAWB += "\r\n";
-
 
             //CNE
             strAWB += "CNE" + "\r\n";

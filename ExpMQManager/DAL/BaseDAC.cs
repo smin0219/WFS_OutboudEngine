@@ -446,7 +446,7 @@ namespace ExpMQManager.DAL
 					    BEGIN
                             SELECT A.iid ,A.msgType ,A.subMsgType ,FlightSeq ,A.Lcode
                                       ,A.Ccode ,A.createdDate ,A.CreatedBy ,msgVersion ,msgAddress
-                                      ,A.Carrier ,OriginCd ,DestCd ,Pcs ,Weight ,AwbPOU Dest
+                                      ,A.Carrier ,OriginCd , C.flightOrigin Origin, DestCd ,AwbPOU Dest,Pcs ,Weight 
                                       ,Prefix ,AWB ,A.MID
 								      ,newEDIAB.MsgVersion as msgVersion, newEDIAB.MsgAddress as msgAddress
                                 FROM EDI_Msg_Queue A
@@ -478,7 +478,7 @@ namespace ExpMQManager.DAL
 					    BEGIN
                             SELECT A.iid ,A.msgType ,A.subMsgType ,FlightSeq ,A.Lcode
                                   ,A.Ccode ,A.createdDate ,A.CreatedBy ,msgVersion ,msgAddress
-                                  ,A.Carrier ,OriginCd ,DestCd ,Pcs ,Weight ,AwbPOU Dest
+                                  ,A.Carrier ,OriginCd , C.flightOrigin Origin, DestCd ,AwbPOU Dest,Pcs ,Weight 
                                   ,Prefix ,AWB ,A.MID
                             FROM EDI_Msg_Queue A
                             JOIN Exp_Master B ON A.MID = B.MID
@@ -1013,6 +1013,7 @@ namespace ExpMQManager.DAL
                     reader["prefix"].ToString().Trim(),
                     reader["AWB"].ToString().Trim(),
                     reader["OriginCd"].ToString().Trim(),
+                    reader["Origin"].ToString().Trim(),
                     reader["DestCd"].ToString().Trim(),
                     reader["Dest"].ToString().Trim(),
                     pcs,
@@ -1071,6 +1072,7 @@ namespace ExpMQManager.DAL
                     reader["prefix"].ToString().Trim(),
                     reader["AWB"].ToString().Trim(),
                     reader["OriginCd"].ToString().Trim(),
+                    reader["Origin"].ToString().Trim(),
                     reader["DestCd"].ToString().Trim(),
                     reader["AwbPOU"].ToString().Trim(),
                     pcs,
