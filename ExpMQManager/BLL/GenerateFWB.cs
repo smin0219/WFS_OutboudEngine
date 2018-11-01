@@ -46,6 +46,7 @@ namespace ExpMQManager.BLL
             }
             #endregion
             if ((msgEntity.carrier == "BA" || msgEntity.carrier == "SK") && msgEntity.destFlight != msgEntity.dest)
+                //msgEntity.dest = AWBPOU in expMaster
                 strAWB += "/" + msgEntity.dest + msgEntity.carrier;
             strAWB += "\r\n";
 
