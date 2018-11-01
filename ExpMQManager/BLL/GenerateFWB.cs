@@ -45,9 +45,12 @@ namespace ExpMQManager.BLL
                 strAWB += "RTG" + "/" + msgEntity.destFlight + msgEntity.carrier;
             }
             #endregion
-            if ((msgEntity.carrier == "BA" || msgEntity.carrier == "SK") && msgEntity.destFlight != msgEntity.dest)
-                //msgEntity.dest = AWBPOU in expMaster
-                strAWB += "/" + msgEntity.dest + msgEntity.carrier;
+            //if ((msgEntity.carrier == "BA" || msgEntity.carrier == "SK") && msgEntity.destFlight != msgEntity.dest) => This line has been removed. Requested by Michael Serzo on October 30 1:30 PM
+            //msgEntity.dest = AWBPOU in expMaster
+            if (msgEntity.destFlight != msgEntity.dest)
+                {
+                    strAWB += "/" + msgEntity.dest + msgEntity.carrier;
+                }
             strAWB += "\r\n";
 
             //SHP
