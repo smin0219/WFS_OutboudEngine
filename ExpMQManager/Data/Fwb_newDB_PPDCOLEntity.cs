@@ -10,38 +10,67 @@ namespace ExpMQManager.Data
         public Fwb_newDB_PPDCOLEntity()
         { }
 
-        public Fwb_newDB_PPDCOLEntity(bool __hasPPDCOL, string __ChargeType, int __MID, decimal __TotalWeight, decimal __Valuation, decimal __Taxes, decimal __DueAgent, decimal __DueCarrier, decimal __Total)
+        public Fwb_newDB_PPDCOLEntity(bool __hasPPDCOL, string __ChargeTypePPD, string __ChargeTypeCOL, int __MID, decimal __TotalWeightPPD, decimal __TotalWeightCOL, decimal __ValuationPPD, decimal __ValuationCOL, decimal __TaxesPPD, decimal __TaxesCOL, decimal __DueAgentPPD, decimal __DueAgentCOL, decimal __DueCarrierPPD, decimal __DueCarrierCOL, decimal __TotalPPD, decimal __TotalCOL)
         {
             //this.hasPPDCOL = __hasPPDCOL;
-            this.ChargeType = __ChargeType;
+            this.ChargeTypePPD = __ChargeTypePPD;
+            this.ChargeTypeCOL = __ChargeTypeCOL;
             this.MID = __MID;
-            this.TotalWeight = __TotalWeight;
-            this.Valuation = __Valuation;
-            this.Taxes = __Taxes;
-            this.DueAgent = __DueAgent;
-            this.DueCarrier = __DueCarrier;
-            this.Total = __Total;
-        }
+            this.TotalWeightPPD = __TotalWeightPPD;
+            this.TotalWeightCOL = __TotalWeightCOL;
+            this.ValuationPPD = __ValuationPPD;
+            this.ValuationCOL = __ValuationCOL;
+            this.TaxesPPD = __TaxesPPD;
+            this.TaxesCOL = __TaxesCOL;
+            this.DueAgentPPD = __DueAgentPPD;
+            this.DueAgentCOL = __DueAgentCOL;
+            this.DueCarrierPPD = __DueCarrierPPD;
+            this.DueCarrierCOL = __DueCarrierCOL;
+            this.TotalPPD = __TotalPPD;
+            this.TotalCOL = __TotalCOL;
+            }
 
-        private bool _hasPPDCOL = false;
-        public bool hasPPDCOL
+        private bool _hasPPD = false;
+        public bool hasPPD
         {
             get
             {
-                decimal tempSUM = 0;
-                tempSUM = TotalWeight + Valuation + Taxes + DueAgent + DueCarrier + Total;
+                decimal tempSUMPPD = 0;
+                tempSUMPPD = TotalWeightPPD + ValuationPPD + TaxesPPD + DueAgentPPD + DueCarrierPPD + TotalPPD;
 
-                if (tempSUM > 0)
-                    _hasPPDCOL = true;
+                if (tempSUMPPD > 0 )
+                    _hasPPD = true;
                 
-                return _hasPPDCOL;
+                return _hasPPD;
             }
         }
-        private string _ChargeType = "";
-        public string ChargeType
+
+        private bool _hasCOL = false;
+        public bool hasCOL
         {
-            get { return _ChargeType; }
-            set { _ChargeType = value; }
+            get
+            {
+                decimal tempSUMCOL = 0;
+                tempSUMCOL = TotalWeightCOL + ValuationCOL + TaxesCOL + DueAgentCOL + DueCarrierCOL + TotalCOL;
+
+                if (tempSUMCOL > 0)
+                    _hasCOL = true;
+
+                return _hasCOL;
+            }
+        }
+        private string _ChargeTypePPD = "";
+        public string ChargeTypePPD
+        {
+            get { return _ChargeTypePPD; }
+            set { _ChargeTypePPD = value; }
+        }
+
+        private string _ChargeTypeCOL = "";
+        public string ChargeTypeCOL
+        {
+            get { return _ChargeTypeCOL; }
+            set { _ChargeTypeCOL = value; }
         }
 
         private int _MID = 0;
@@ -51,46 +80,88 @@ namespace ExpMQManager.Data
             set { _MID = value; }
         }
 
-        private decimal _TotalWeight = 0;
-        public decimal TotalWeight
+        private decimal _TotalWeightPPD = 0;
+        public decimal TotalWeightPPD
         {
-            get { return _TotalWeight; }
-            set { _TotalWeight = value; }
+            get { return _TotalWeightPPD; }
+            set { _TotalWeightPPD = value; }
         }
 
-        private decimal _Valuation = 0;
-        public decimal Valuation
+        private decimal _TotalWeightCOL = 0;
+        public decimal TotalWeightCOL
+            {
+            get { return _TotalWeightCOL; }
+            set { _TotalWeightCOL = value; }
+            }
+
+        private decimal _ValuationPPD = 0;
+        public decimal ValuationPPD
         {
-            get { return _Valuation; }
-            set { _Valuation = value; }
+            get { return _ValuationPPD; }
+            set { _ValuationPPD = value; }
         }
 
-        private decimal _Taxes = 0;
-        public decimal Taxes
+        private decimal _ValuationCOL = 0;
+        public decimal ValuationCOL
+            {
+            get { return _ValuationCOL; }
+            set { _ValuationCOL = value; }
+            }
+
+        private decimal _TaxesPPD = 0;
+        public decimal TaxesPPD
         {
-            get { return _Taxes; }
-            set { _Taxes = value; }
+            get { return _TaxesPPD; }
+            set { _TaxesPPD = value; }
         }
 
-        private decimal _DueAgent = 0;
-        public decimal DueAgent
+        private decimal _TaxesCOL = 0;
+        public decimal TaxesCOL
+            {
+            get { return _TaxesCOL; }
+            set { _TaxesCOL = value; }
+            }
+
+        private decimal _DueAgentPPD = 0;
+        public decimal DueAgentPPD
         {
-            get { return _DueAgent; }
-            set { _DueAgent = value; }
+            get { return _DueAgentPPD; }
+            set { _DueAgentPPD = value; }
         }
 
-        private decimal _DueCarrier = 0;
-        public decimal DueCarrier
+        private decimal _DueAgentCOL = 0;
+        public decimal DueAgentCOL
+            {
+            get { return _DueAgentCOL; }
+            set { _DueAgentCOL = value; }
+            }
+
+        private decimal _DueCarrierPPD = 0;
+        public decimal DueCarrierPPD
         {
-            get { return _DueCarrier; }
-            set { _DueCarrier = value; }
+            get { return _DueCarrierPPD; }
+            set { _DueCarrierPPD = value; }
         }
 
-        private decimal _Total = 0;
-        public decimal Total
+        private decimal _DueCarrierCOL = 0;
+        public decimal DueCarrierCOL
+            {
+            get { return _DueCarrierCOL; }
+            set { _DueCarrierCOL = value; }
+            }
+
+        private decimal _TotalPPD = 0;
+        public decimal TotalPPD
         {
-            get { return _Total; }
-            set { _Total = value; }
+            get { return _TotalPPD; }
+            set { _TotalPPD = value; }
         }
-    }
+
+        private decimal _TotalCOL = 0;
+        public decimal TotalCOL
+            {
+            get { return _TotalCOL; }
+            set { _TotalCOL = value; }
+            }
+        }
 }

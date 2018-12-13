@@ -151,6 +151,32 @@ namespace ExpMQManager.DAL
 
             //2015-10-06. PPD
             //2017-11-21. add PPD for WTVAL is NC. Requested by Cecile 2017-11-21 9:12am.  
+          //  strSql = @"
+          //              DECLARE @typeSelector VARCHAR(5)
+          //              DECLARE @MID INT = {0}
+          //              DECLARE @ppdTotal	INT
+          //              DECLARE @colTotal	INT
+
+          //              SET @typeSelector = ( SELECT RTRIM(LTRIM(ISNULL(WTVAL, ''))) FROM Exp_Master WHERE MID = @MID)
+
+          //              IF(@typeselector = 'NC' or SUBSTRING(@typeselector, 1, 1) = 'P')
+          //              BEGIN
+	         //               SELECT	MID, 'P' as ChargeType, PPDTotalWeight as TotalWeight, PPDValuation as Valuation, PPDTaxes as Taxes, PPDDueAgent as DueAgent, PPDDueCarrier as DueCarrier, 
+          //                          CASE WHEN (PPDTotal is NULL or PPDTotal = 0) THEN (ISNULL(PPDTotalWeight, 0) + ISNULL(PPDValuation, 0) + ISNULL(PPDTaxes, 0) + ISNULL(PPDDueAgent, 0) + ISNULL(PPDDueCarrier, 0))
+										//ELSE PPDTotal END as Total
+          //                  FROM Exp_Master 
+          //                  WHERE MID = @MID
+          //              END
+          //              ElSE IF(SUBSTRING(@typeselector, 1, 1) = 'C')
+          //              BEGIN
+	         //               SELECT	MID, 'C' as ChargeType, COLTotalWeight as TotalWeight, COLValuation as Valuation, COLTaxes as Taxes, COLDueAgent as DueAgent, COLDueCarrier as DueCarrier,
+          //                          CASE WHEN (COLTotal is NULL or COLTotal = 0) THEN (ISNULL(COLTotalWeight, 0) + ISNULL(COLValuation, 0) + ISNULL(COLTaxes, 0) + ISNULL(COLDueAgent, 0) + ISNULL(COLDueCarrier, 0))
+										//ELSE COLTotal END as Total
+          //                  FROM Exp_Master 
+          //                  WHERE MID = @MID
+          //              END
+          //          ";
+          // It has been changed becaues of easy export 12/12/2018 Jacob Min
             strSql = @"
                         DECLARE @typeSelector VARCHAR(5)
                         DECLARE @MID INT = {0}
@@ -161,17 +187,23 @@ namespace ExpMQManager.DAL
 
                         IF(@typeselector = 'NC' or SUBSTRING(@typeselector, 1, 1) = 'P')
                         BEGIN
-	                        SELECT	MID, 'P' as ChargeType, PPDTotalWeight as TotalWeight, PPDValuation as Valuation, PPDTaxes as Taxes, PPDDueAgent as DueAgent, PPDDueCarrier as DueCarrier, 
+	                        SELECT	MID, 'P' as ChargeType, PPDTotalWeight as TotalWeightPPD, PPDValuation as ValuationPPD, PPDTaxes as TaxesPPD, PPDDueAgent as DueAgentPPD, PPDDueCarrier as DueCarrierPPD,
+                                    COLTotalWeight as TotalWeightCOL, COLValuation as ValuationCOL, COLTaxes as TaxesCOL, COLDueAgent as DueAgentCOL, COLDueCarrier as DueCarrierCOL,
                                     CASE WHEN (PPDTotal is NULL or PPDTotal = 0) THEN (ISNULL(PPDTotalWeight, 0) + ISNULL(PPDValuation, 0) + ISNULL(PPDTaxes, 0) + ISNULL(PPDDueAgent, 0) + ISNULL(PPDDueCarrier, 0))
-										ELSE PPDTotal END as Total
+									ELSE PPDTotal END as TotalPPD, 
+                                    CASE WHEN (COLTotal is NULL or COLTotal = 0) THEN (ISNULL(COLTotalWeight, 0) + ISNULL(COLValuation, 0) + ISNULL(COLTaxes, 0) + ISNULL(COLDueAgent, 0) + ISNULL(COLDueCarrier, 0))
+									ELSE COLTotal END as TotalCOL
                             FROM Exp_Master 
                             WHERE MID = @MID
                         END
                         ElSE IF(SUBSTRING(@typeselector, 1, 1) = 'C')
                         BEGIN
-	                        SELECT	MID, 'C' as ChargeType, COLTotalWeight as TotalWeight, COLValuation as Valuation, COLTaxes as Taxes, COLDueAgent as DueAgent, COLDueCarrier as DueCarrier,
+	                        SELECT	MID, 'C' as ChargeType, COLTotalWeight as TotalWeightCOL, COLValuation as ValuationCOL, COLTaxes as TaxesCOL, COLDueAgent as DueAgentCOL, COLDueCarrier as DueCarrierCOL,
+                                    PPDTotalWeight as TotalWeightPPD, PPDValuation as ValuationPPD, PPDTaxes as TaxesPPD, PPDDueAgent as DueAgentPPD, PPDDueCarrier as DueCarrierPPD,
                                     CASE WHEN (COLTotal is NULL or COLTotal = 0) THEN (ISNULL(COLTotalWeight, 0) + ISNULL(COLValuation, 0) + ISNULL(COLTaxes, 0) + ISNULL(COLDueAgent, 0) + ISNULL(COLDueCarrier, 0))
-										ELSE COLTotal END as Total
+									ELSE COLTotal END as TotalPPD, 
+                                    CASE WHEN (PPDTotal is NULL or PPDTotal = 0) THEN (ISNULL(PPDTotalWeight, 0) + ISNULL(PPDValuation, 0) + ISNULL(PPDTaxes, 0) + ISNULL(PPDDueAgent, 0) + ISNULL(PPDDueCarrier, 0))
+									ELSE PPDTotal END as TotalCOL
                             FROM Exp_Master 
                             WHERE MID = @MID
                         END
@@ -544,39 +576,69 @@ namespace ExpMQManager.DAL
                 catch (Exception e)
                 {
                 }
-                decimal totalWeight = 0; try { totalWeight = Convert.ToDecimal(reader["TotalWeight"].ToString()); }
+                decimal totalWeightPPD = 0; try { totalWeightPPD = Convert.ToDecimal(reader["TotalWeightPPD"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                decimal valuation = 0; try { valuation = Convert.ToDecimal(reader["Valuation"].ToString()); }
+                decimal totalWeightCOL = 0; try { totalWeightCOL = Convert.ToDecimal(reader["TotalWeightCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                decimal valuationPPD = 0; try { valuationPPD = Convert.ToDecimal(reader["ValuationPPD"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                decimal taxes = 0; try { taxes = Convert.ToDecimal(reader["Taxes"].ToString()); }
+                decimal valuationCOL = 0; try { valuationCOL = Convert.ToDecimal(reader["ValuationCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                decimal taxesPPD = 0; try { taxesPPD = Convert.ToDecimal(reader["TaxesCOL"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                decimal dueAgent = 0; try { dueAgent = Convert.ToDecimal(reader["DueAgent"].ToString()); }
+                decimal taxesCOL = 0; try { taxesCOL = Convert.ToDecimal(reader["TaxesCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                decimal dueAgentPPD = 0; try { dueAgentPPD = Convert.ToDecimal(reader["DueAgentPPD"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                decimal dueCarrier = 0; try { dueCarrier = Convert.ToDecimal(reader["DueCarrier"].ToString()); }
+                decimal dueAgentCOL = 0; try { dueAgentCOL = Convert.ToDecimal(reader["DueAgentCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                decimal dueCarrierPPD = 0; try { dueCarrierPPD = Convert.ToDecimal(reader["DueCarrierPPD"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                decimal total = 0; try { total = Convert.ToDecimal(reader["Total"].ToString()); }
+                decimal dueCarrierCOL = 0; try { dueCarrierCOL = Convert.ToDecimal(reader["DueCarrierCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                decimal totalPPD = 0; try { totalPPD = Convert.ToDecimal(reader["TotalPPD"].ToString()); }
                 catch (Exception e)
                 {
                 }
-                fwbEntity.colnewDBPPDCOL.ChargeType = reader["ChargeType"].ToString();
+                decimal totalCOL = 0; try { totalCOL = Convert.ToDecimal(reader["TotalCOL"].ToString()); }
+                catch (Exception e)
+                    {
+                    }
+                //fwbEntity.colnewDBPPDCOL.ChargeType = reader["ChargeType"].ToString();
                 fwbEntity.colnewDBPPDCOL.MID = mid;
-                fwbEntity.colnewDBPPDCOL.TotalWeight = totalWeight;
-                fwbEntity.colnewDBPPDCOL.Valuation = valuation;
-                fwbEntity.colnewDBPPDCOL.Taxes = taxes;
-                fwbEntity.colnewDBPPDCOL.DueAgent = dueAgent;
-                fwbEntity.colnewDBPPDCOL.DueCarrier = dueCarrier;
-                fwbEntity.colnewDBPPDCOL.Total = total;
-            }
+                fwbEntity.colnewDBPPDCOL.TotalWeightPPD = totalWeightPPD;
+                fwbEntity.colnewDBPPDCOL.TotalWeightCOL = totalWeightCOL;
+                fwbEntity.colnewDBPPDCOL.ValuationPPD = valuationPPD;
+                fwbEntity.colnewDBPPDCOL.ValuationCOL = valuationCOL;
+                fwbEntity.colnewDBPPDCOL.TaxesPPD = taxesPPD;
+                fwbEntity.colnewDBPPDCOL.TaxesCOL = taxesCOL;
+                fwbEntity.colnewDBPPDCOL.DueAgentPPD = dueAgentPPD;
+                fwbEntity.colnewDBPPDCOL.DueAgentCOL = dueAgentCOL;
+                fwbEntity.colnewDBPPDCOL.DueCarrierPPD = dueCarrierPPD;
+                fwbEntity.colnewDBPPDCOL.DueCarrierCOL = dueCarrierCOL;
+                fwbEntity.colnewDBPPDCOL.TotalPPD = totalPPD;
+                fwbEntity.colnewDBPPDCOL.TotalCOL = totalCOL;
+                }
 
             reader.Close();
             reader.Dispose();

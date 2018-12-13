@@ -369,69 +369,123 @@ namespace ExpMQManager.BLL
             }
 
             //PPD or COL
-            if (msgEntity.colnewDBPPDCOL.hasPPDCOL)
+            if (msgEntity.colnewDBPPDCOL.hasPPD==true || msgEntity.colnewDBPPDCOL.hasCOL == true)
             {
-                if (msgEntity.colnewDBPPDCOL.ChargeType == "P")
+                if (msgEntity.colnewDBPPDCOL.hasPPD == true)
                 {
                     strAWB += "PPD";
+                    int tempcnt = 0;
+
+                    if (msgEntity.colnewDBPPDCOL.TotalWeightPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "WT" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TotalWeightPPD);
+                    }
+                    //Requested by Chuck 12/12/2018 @ 4:42PM
+                    //else
+                    //{
+                    //    tempcnt = 1;
+                    //    strAWB += "/";
+                    //    strAWB += "WT0.00";
+                    //}
+                    if (msgEntity.colnewDBPPDCOL.ValuationPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "VC" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.ValuationPPD);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.TaxesPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "TX" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TaxesPPD);
+                    }
+                    if (tempcnt == 0)
+                        strAWB += "/";
+
+                    strAWB += "\r\n";
+                    tempcnt = 0;
+                    if (msgEntity.colnewDBPPDCOL.DueAgentPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "OA" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.DueAgentPPD);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.DueCarrierPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "OC" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.DueCarrierPPD);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.TotalPPD != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "CT" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TotalPPD);
+                    }
+                    if (tempcnt == 1)
+                        strAWB += "\r\n";
+
                 }
-                else
+                if (msgEntity.colnewDBPPDCOL.hasCOL == true)
                 {
                     strAWB += "COL";
-                }
+                    int tempcnt = 0;
 
-                int tempcnt = 0;
-                if (msgEntity.colnewDBPPDCOL.TotalWeight != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "WT" + msgEntity.colnewDBPPDCOL.TotalWeight;
-                }
-                else
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "WT0.00";
-                }
-                if (msgEntity.colnewDBPPDCOL.Valuation != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "VC" + msgEntity.colnewDBPPDCOL.Valuation;
-                }
-                if (msgEntity.colnewDBPPDCOL.Taxes != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "TX" + msgEntity.colnewDBPPDCOL.Taxes;
-                }
-                if (tempcnt == 0)
-                    strAWB += "/";
+                    if (msgEntity.colnewDBPPDCOL.TotalWeightCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "WT" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TotalWeightCOL);
+                    }
+                    //Requested by Chuck 12/12/2018 @ 4:42PM
+                    //else
+                    //{
+                    //    tempcnt = 1;
+                    //    strAWB += "/";
+                    //    strAWB += "WT0.00";
+                    //}
+                    if (msgEntity.colnewDBPPDCOL.ValuationCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "VC" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.ValuationCOL);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.TaxesCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "TX" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TaxesCOL);
+                    }
+                    if (tempcnt == 0)
+                        strAWB += "/";
 
-                strAWB += "\r\n";
-
-                tempcnt = 0;
-                if (msgEntity.colnewDBPPDCOL.DueAgent != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "OA" + msgEntity.colnewDBPPDCOL.DueAgent;
-                }
-                if (msgEntity.colnewDBPPDCOL.DueCarrier != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "OC" + msgEntity.colnewDBPPDCOL.DueCarrier;
-                }
-                if (msgEntity.colnewDBPPDCOL.Total != 0)
-                {
-                    tempcnt = 1;
-                    strAWB += "/";
-                    strAWB += "CT" + msgEntity.colnewDBPPDCOL.Total;
-                }
-
-                if (tempcnt == 1)
                     strAWB += "\r\n";
+                    tempcnt = 0;
+
+                    if (msgEntity.colnewDBPPDCOL.DueAgentCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "OA" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.DueAgentCOL);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.DueCarrierCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "OC" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.DueCarrierCOL);
+                    }
+                    if (msgEntity.colnewDBPPDCOL.TotalCOL != 0)
+                    {
+                        tempcnt = 1;
+                        strAWB += "/";
+                        strAWB += "CT" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TotalCOL);
+                    }
+                    if (tempcnt == 1)
+                    strAWB += "\r\n";
+
+                }
             }
             else
             {
