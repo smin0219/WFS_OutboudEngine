@@ -201,9 +201,9 @@ namespace ExpMQManager.DAL
 	                        SELECT	MID, 'C' as ChargeType, COLTotalWeight as TotalWeightCOL, COLValuation as ValuationCOL, COLTaxes as TaxesCOL, COLDueAgent as DueAgentCOL, COLDueCarrier as DueCarrierCOL,
                                     PPDTotalWeight as TotalWeightPPD, PPDValuation as ValuationPPD, PPDTaxes as TaxesPPD, PPDDueAgent as DueAgentPPD, PPDDueCarrier as DueCarrierPPD,
                                     CASE WHEN (COLTotal is NULL or COLTotal = 0) THEN (ISNULL(COLTotalWeight, 0) + ISNULL(COLValuation, 0) + ISNULL(COLTaxes, 0) + ISNULL(COLDueAgent, 0) + ISNULL(COLDueCarrier, 0))
-									ELSE COLTotal END as TotalPPD, 
+									ELSE COLTotal END as TotalCOL, 
                                     CASE WHEN (PPDTotal is NULL or PPDTotal = 0) THEN (ISNULL(PPDTotalWeight, 0) + ISNULL(PPDValuation, 0) + ISNULL(PPDTaxes, 0) + ISNULL(PPDDueAgent, 0) + ISNULL(PPDDueCarrier, 0))
-									ELSE PPDTotal END as TotalCOL
+									ELSE PPDTotal END as TotalPPD
                             FROM Exp_Master 
                             WHERE MID = @MID
                         END

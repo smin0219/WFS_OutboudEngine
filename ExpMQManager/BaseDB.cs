@@ -200,7 +200,7 @@ namespace ExpMQManager
         
         
         public static int buildLog(int queueId, string errorMsg, string errorDetail)
-        {
+        { 
             string logmsg = "";
             logmsg += "\t Queue ID: " + queueId + "\r\n";
             logmsg += "\t Error msg: " + errorMsg + "\r\n";

@@ -28,9 +28,9 @@ namespace ExpMQManager
                 string strSql = "";
                 if (isLive)
                 {
-                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-12-12'";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' ";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG FROM EDI_Msg_Queue WHERE Status = 'W' ORDER BY iid";
-                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (22675810)";
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351701)";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue 
                     //            where iid in (16613038)";
 
@@ -44,8 +44,8 @@ namespace ExpMQManager
                 {
                     //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351351)";
 
-                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4347955)";
-                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-12-12'";
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351377)";
+                    //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-12-12'";
                 }
 
                 DataTable dt = baseDB.GetSqlDataTable(strSql);

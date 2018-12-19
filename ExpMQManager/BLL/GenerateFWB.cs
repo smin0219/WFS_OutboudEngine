@@ -458,8 +458,6 @@ namespace ExpMQManager.BLL
                         strAWB += "/";
                         strAWB += "TX" + string.Format("{0:0.00}", msgEntity.colnewDBPPDCOL.TaxesCOL);
                     }
-                    if (tempcnt == 0)
-                        strAWB += "/";
 
                     strAWB += "\r\n";
                     tempcnt = 0;
