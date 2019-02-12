@@ -42,7 +42,7 @@ namespace ExpMQManager
                     }
                 else
                 {
-                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351351)";
+                    strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4355861)";
 
                     //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351377)";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-12-12'";

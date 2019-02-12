@@ -11,7 +11,7 @@ namespace ExpMQManager.Data
         {
 
         }
-        public UwsEntity(string __uld, string __pou, string __loadCategory, string __shc, string __shc2, string __shc3, decimal __weight, string __weightindicator)
+        public UwsEntity(string __uld, string __pou, string __loadCategory, string __shc, string __shc2, string __shc3, decimal __weight, string __weightindicator, int __isFinal)
         {
             this.uld = __uld;
             this.pou = __pou;
@@ -21,6 +21,7 @@ namespace ExpMQManager.Data
             this.shc3 = __shc3;
             this.weight = __weight;
             this.weightindicator = __weightindicator;
+            this.isFinal = __isFinal;
         }
         private string _uld = "";
         public string uld
@@ -116,6 +117,18 @@ namespace ExpMQManager.Data
             set
             {
                 _weightindicator = value;
+            }
+        }
+        private int _isFinal = 0;
+        public int isFinal
+        {
+            get
+            {
+                return _isFinal;
+            }
+            set
+            {
+                _isFinal = value;
             }
         }
     }

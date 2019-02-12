@@ -30,7 +30,13 @@ namespace ExpMQManager.BLL
             //string fltDate = baseEntity.flightDate.ToString("dd");
 
             strMSG += baseEntity.flightNo + "/" + fltDate + "." + baseEntity.origin;
-            if (uwsEntityCol.Where(x => x.weightindicator == "P").Count() == 0)
+
+            //Update isFinal on Exp_UWS with flightSeq. 2019 - 2 - 12
+            //if (uwsEntityCol.Where(x => x.weightindicator == "P").Count() == 0)
+            //{
+            //    strMSG += ".FINAL";
+            //}
+            if(uwsEntityCol.Max(x=>x.isFinal) == 1)
             {
                 strMSG += ".FINAL";
             }
