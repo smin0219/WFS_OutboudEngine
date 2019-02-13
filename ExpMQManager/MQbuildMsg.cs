@@ -166,7 +166,7 @@ namespace ExpMQManager
                                 baseMessage = new GenerateFBR();
 
                             if (msgType.ToUpper() == "UWS")
-                                baseMessage = new GeneratwUWS();
+                                baseMessage = new GenerateUWS();
 
                             #endregion
                         }

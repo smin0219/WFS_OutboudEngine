@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace ExpMQManager.BLL
 {
-    public class GeneratwUWS : GenerateBase
+    public class GenerateUWS : GenerateBase
     {
         public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {

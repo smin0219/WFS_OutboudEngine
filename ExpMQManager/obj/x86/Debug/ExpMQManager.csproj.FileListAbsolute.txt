@@ -325,7 +325,6 @@ C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.exe
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.pdb
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\bin\Debug\amqmdnet.dll
-C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csprojAssemblyReference.cache
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.MQ_ManagerExp.resources
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.Properties.Resources.resources
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.GenerateResource.cache
