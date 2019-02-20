@@ -54,24 +54,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ExpMQManager.exe" size="627712">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ExpMQManager.exe" size="630272">
       <assemblyIdentity name="ExpMQManager" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>CAjch6woDJacYw1/4R3DUT7iEC8=</dsig:DigestValue>
+        <dsig:DigestValue>zDjuMvsyRX3x6WbF3c0w3O1+f6o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="ExpMQManager.exe.config" size="422">
+  <file name="ExpMQManager.exe.config" size="423">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>m8orGaiGNZFeURrre/ukAVtLBjY=</dsig:DigestValue>
+      <dsig:DigestValue>xfsAZcS6tPd6IOFUYz9UqyVJcK4=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

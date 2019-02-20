@@ -106,7 +106,7 @@
     <Compile Include="BLL\GenerateMAN.cs" />
     <Compile Include="BLL\GenerateRCF.cs" />
     <Compile Include="BLL\GenerateRCS.cs" />
-    <Compile Include="BLL\GeneratwUWS.cs" />
+    <Compile Include="BLL\GenerateUWS.cs" />
     <Compile Include="BLL\sendSITAmsg.cs" />
     <Compile Include="CASMqm.cs" />
     <Compile Include="DAL\AwdDAC.cs" />

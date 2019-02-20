@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace ExpMQManager.BLL
 {
-    public class GeneratwUWS : GenerateBase
+    public class GenerateUWS : GenerateBase
     {
         public override string doBuildUp(string msgType, string subType, int mid, int refID, int flightSeq, int queueId)
         {
@@ -30,7 +30,13 @@ namespace ExpMQManager.BLL
             //string fltDate = baseEntity.flightDate.ToString("dd");
 
             strMSG += baseEntity.flightNo + "/" + fltDate + "." + baseEntity.origin;
-            if (uwsEntityCol.Where(x => x.weightindicator == "P").Count() == 0)
+
+            //Update isFinal on Exp_UWS with flightSeq. 2019 - 2 - 12
+            //if (uwsEntityCol.Where(x => x.weightindicator == "P").Count() == 0)
+            //{
+            //    strMSG += ".FINAL";
+            //}
+            if(uwsEntityCol.Max(x=>x.isFinal) == 1)
             {
                 strMSG += ".FINAL";
             }
@@ -55,6 +61,30 @@ namespace ExpMQManager.BLL
                     {
                         strMSG += "." + row.shc3;
                     }
+                    if (row.shc4 != null && row.shc4.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc4;
+                    }
+                    if (row.shc5 != null && row.shc5.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc5;
+                    }
+                    if (row.shc6 != null && row.shc6.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc6;
+                    }
+                    if (row.shc7 != null && row.shc7.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc7;
+                    }
+                    if (row.shc8 != null && row.shc8.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc8;
+                    }
+                    if (row.shc9 != null && row.shc9.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc9;
+                    }
                     strMSG += "\r\n";
                 }
                 else
@@ -78,6 +108,30 @@ namespace ExpMQManager.BLL
                     if (row.shc3 != null && row.shc3.Trim() != string.Empty)
                     {
                         strMSG += "." + row.shc3;
+                    }
+                    if (row.shc4 != null && row.shc4.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc4;
+                    }
+                    if (row.shc5 != null && row.shc5.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc5;
+                    }
+                    if (row.shc6 != null && row.shc6.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc6;
+                    }
+                    if (row.shc7 != null && row.shc7.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc7;
+                    }
+                    if (row.shc8 != null && row.shc8.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc8;
+                    }
+                    if (row.shc9 != null && row.shc9.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc9;
                     }
                     strMSG += "\r\n";
                 }
