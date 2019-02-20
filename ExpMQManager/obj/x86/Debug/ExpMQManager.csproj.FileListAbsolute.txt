@@ -335,3 +335,19 @@ C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQMana
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.CopyComplete
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.exe
 C:\Users\NA\source\repos\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.pdb
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.exe.config
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.exe.manifest
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.application
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.exe
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\ExpMQManager.pdb
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\bin\Debug\amqmdnet.dll
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.MQ_ManagerExp.resources
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.Properties.Resources.resources
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.GenerateResource.cache
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.CoreCompileInputs.cache
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.TrustInfo.xml
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.exe.manifest
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.application
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.csproj.CopyComplete
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.exe
+C:\Users\Sung Jae Jacob Min\Jacob\WFS\AWS_Engine\AWS_OutboundEngine\ExpMQManager\obj\x86\Debug\ExpMQManager.pdb

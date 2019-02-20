@@ -14,7 +14,7 @@ namespace ExpMQManager.DAL
             string strSql = "";
             strSql = @"
                 SELECT 
-                ULD, DestCd as POU, LoadCategory, SHC, SHC2, SHC3, [Weight], WeightIndicator, isFinal
+                ULD, DestCd as POU, LoadCategory, SHC, SHC2, SHC3, SHC4, SHC5, SHC6, SHC7, SHC8, SHC9, [Weight], WeightIndicator, isFinal
                 FROM Exp_UWS
                 WHERE FlightSeq = {0}
                 ORDER BY
@@ -42,6 +42,12 @@ namespace ExpMQManager.DAL
                     reader["SHC"].ToString(),
                     reader["SHC2"].ToString(),
                     reader["SHC3"].ToString(),
+                    reader["SHC4"].ToString(),
+                    reader["SHC5"].ToString(),
+                    reader["SHC6"].ToString(),
+                    reader["SHC7"].ToString(),
+                    reader["SHC8"].ToString(),
+                    reader["SHC9"].ToString(),
                     weight,
                     reader["WeightIndicator"].ToString(),
                     isFinal

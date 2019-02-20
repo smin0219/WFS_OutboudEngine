@@ -61,6 +61,30 @@ namespace ExpMQManager.BLL
                     {
                         strMSG += "." + row.shc3;
                     }
+                    if (row.shc4 != null && row.shc4.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc4;
+                    }
+                    if (row.shc5 != null && row.shc5.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc5;
+                    }
+                    if (row.shc6 != null && row.shc6.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc6;
+                    }
+                    if (row.shc7 != null && row.shc7.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc7;
+                    }
+                    if (row.shc8 != null && row.shc8.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc8;
+                    }
+                    if (row.shc9 != null && row.shc9.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc9;
+                    }
                     strMSG += "\r\n";
                 }
                 else
@@ -84,6 +108,30 @@ namespace ExpMQManager.BLL
                     if (row.shc3 != null && row.shc3.Trim() != string.Empty)
                     {
                         strMSG += "." + row.shc3;
+                    }
+                    if (row.shc4 != null && row.shc4.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc4;
+                    }
+                    if (row.shc5 != null && row.shc5.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc5;
+                    }
+                    if (row.shc6 != null && row.shc6.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc6;
+                    }
+                    if (row.shc7 != null && row.shc7.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc7;
+                    }
+                    if (row.shc8 != null && row.shc8.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc8;
+                    }
+                    if (row.shc9 != null && row.shc9.Trim() != string.Empty)
+                    {
+                        strMSG += "." + row.shc9;
                     }
                     strMSG += "\r\n";
                 }
