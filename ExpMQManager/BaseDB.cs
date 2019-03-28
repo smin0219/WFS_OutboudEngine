@@ -15,7 +15,7 @@ namespace ExpMQManager
 
         void IDisposable.Dispose() { }
 
-        public static bool isLive = Convert.ToBoolean(ConfigurationManager.AppSettings["IsLiveDB"]);
+        public static bool isLive = Convert.ToBoolean(ConfigurationManager.AppSettings["IsLiveParsing"]);
 
         SqlConnection dbcn_ExcuteReader;
 

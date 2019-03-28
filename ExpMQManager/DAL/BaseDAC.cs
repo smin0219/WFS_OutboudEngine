@@ -75,10 +75,7 @@ namespace ExpMQManager.DAL
 
 	                                    WHERE A.iid = @queueID
                                     ";
-                            if (isLiveParsing)
-                            {
-                                strSql = strSql + " AND A.Status = 'W' ";
-                            }
+                            strSql = strSql + " AND A.Status = 'W' ";
                             strSql = string.Format(strSql, queueId, refID, flightSeq, subType);
                         }
                         else
@@ -124,11 +121,7 @@ namespace ExpMQManager.DAL
                                     WHERE A.MID = {0} AND A.msgType = 'FSU' AND A.subMsgType = '{1}' AND A.iid = {3}
                                           	--AND A.Status = 'W' 
                             ";
-                            if (isLiveParsing)
-                            {
-                                strSql = strSql + " AND A.Status = 'W' ";
-                            }
-
+                            strSql = strSql + " AND A.Status = 'W' ";
                             strSql = string.Format(strSql, mid, subType, flightSeq, queueId);
                         }
                         
@@ -179,11 +172,9 @@ namespace ExpMQManager.DAL
 	                                    WHERE A.iid = @queueID
                                     ";
 
-                        if (isLiveParsing)
-                        {
-                            strSql = strSql + " AND A.Status = 'W' ";
-                        }
+                        strSql = strSql + " AND A.Status = 'W' ";
                         strSql = string.Format(strSql, queueId, refID, flightSeq, "RTF");
+
                         break;
 
                     /* Export Common Message Header */
@@ -232,11 +223,7 @@ namespace ExpMQManager.DAL
                                     --AND A.Status = 'W' 
                             ";
 
-                        if (isLiveParsing)
-                        {
-                            strSql = strSql + " AND A.Status = 'W' ";
-                        }
-
+                        strSql = strSql + " AND A.Status = 'W' ";
                         strSql = string.Format(strSql, mid, subType, queueId);
                         break;
                 }
@@ -271,9 +258,7 @@ namespace ExpMQManager.DAL
                             AND EMQ.MsgType = 'NFM'
                             AND EMQ.iid = {1}
                            ";
-                if (isLiveParsing)
-                    strSql = strSql + "AND EMQ.Status = 'W'";
-
+                strSql = strSql + "AND EMQ.Status = 'W'";
                 strSql = string.Format(strSql, flightSeq, queueId);
 
                 baseEntity = GetBaseNFMFromReader(ExecuteReader(strSql));
@@ -305,9 +290,7 @@ namespace ExpMQManager.DAL
                             WHERE EMQ.FlightSeq = {0} AND EMQ.MsgType = 'UWS'
                             AND EMQ.iid = {1}
                            ";
-                if (isLiveParsing)
-                    strSql = strSql + "AND EMQ.Status = 'W'";
-
+                strSql = strSql + "AND EMQ.Status = 'W'";
                 strSql = string.Format(strSql, flightSeq, queueId);
 
                 baseEntity = GetBaseUWSFromReader(ExecuteReader(strSql));
@@ -355,11 +338,7 @@ namespace ExpMQManager.DAL
                             and A.iid = {1}
                         ";
 
-                if (isLiveParsing)
-                {
-                    strSql = strSql + " AND A.Status = 'W' ";
-                }
-
+                strSql = strSql + " AND A.Status = 'W' ";
                 strSql = string.Format(strSql, flightSeq, queueId);
 
                 baseEntity = GetBaseFFMFromReader(ExecuteReader(strSql));
@@ -500,10 +479,8 @@ namespace ExpMQManager.DAL
 					    END
                         ";
                 string isLivechk = "";
-                if (isLiveParsing)
-                {
-                    isLivechk = " AND A.Status = 'W' ";
-                }
+
+                isLivechk = " AND A.Status = 'W' ";
                 strSql = string.Format(strSql, mid, queueId, flightSeq, isLivechk);
 
                 baseEntity = GetBaseFWBFromReader(ExecuteReader(strSql));
@@ -517,10 +494,7 @@ namespace ExpMQManager.DAL
                             WHERE MID = {0} AND A.MsgType = 'IRP' 
                             --AND A.Status = 'W'
                         ";
-                if (isLiveParsing)
-                {
-                    strSql = strSql + " AND A.Status = 'W' ";
-                }
+                strSql = strSql + " AND A.Status = 'W' ";
                 strSql = string.Format(strSql, mid);
 
                 baseEntity = GetBaseIRPFromReader(ExecuteReader(strSql));
@@ -662,10 +636,7 @@ namespace ExpMQManager.DAL
 					    END
                             ";
                 string isLivechk = "";
-                if (isLiveParsing)
-                {
-                    isLivechk = " AND A.Status = 'W' ";
-                }
+                isLivechk = " AND A.Status = 'W' ";
                 strSql = string.Format(strSql, mid, queueId, flightSeq, isLivechk);
 
                 baseEntity = GetBaseFHLFromReader(ExecuteReader(strSql));
@@ -706,10 +677,7 @@ namespace ExpMQManager.DAL
                             {2}
                 ";
                 string isLivechk = "";
-                if (isLiveParsing)
-                {
-                    isLivechk = " AND EMQ.Status = 'W' ";
-                }
+                isLivechk = " AND EMQ.Status = 'W' ";
                 strSql = string.Format(strSql, flightSeq, queueId, isLivechk);
 
                 // it is same as NFM

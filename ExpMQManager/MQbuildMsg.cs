@@ -42,7 +42,8 @@ namespace ExpMQManager
                     }
                 else
                 {
-                    strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4355861)";
+                    strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' ";
+                    //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4355861)";
 
                     //strSql = @" select iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where iid in (4351377)";
                     //strSql = @" SELECT iid, MsgType, subMsgType, MID, HID, RefID, FlightSeq, ResendYN, EDIAddressBook, CustomerId, MsgBody_SITAfreeMSG, MsgAddress_SITAfreeMSG from EDI_Msg_Queue where Status = 'W' and createddate >= '2018-12-12'";
@@ -223,19 +224,12 @@ namespace ExpMQManager
 
                                 foreach (string msg in arrMsg)
                                 {
-                                    if (isLive)
+                                    if (ValidationUtil.isThereSitaReciever(msg))
                                     {
-                                        if (ValidationUtil.isThereSitaReciever(msg))
-                                        {
-                                            result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR1MQNMRInfo, MQ_ManagerExp.QUEUEID1, MQ_ManagerExp.GR1MQCONInfo, MQ_ManagerExp.GR1MQMInfo);
-                                        }
-                                        else
-                                            result = "Message sent to successfully";
+                                        result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR1MQNMRInfo, MQ_ManagerExp.QUEUEID1, MQ_ManagerExp.GR1MQCONInfo, MQ_ManagerExp.GR1MQMInfo);
                                     }
                                     else
-                                    {
-                                        result = "Message sent to the queue successfully";
-                                    }
+                                        result = "Message sent to successfully";
 
 
                                     if (result.IndexOf("successful") > 0)
@@ -257,16 +251,10 @@ namespace ExpMQManager
                                         {
                                             //Create Copy to Cargo-Spot Queue
                                             if (msgType == "UWS" || msgType == "NFM" || msgType == "FFM" || msgType == "FWB" || (msgType == "FSU" && subType == "DEP") || (msgType == "FSU" && subType == "MAN"))
-                                            {
-                                                if (isLive)
+                                            { 
+                                                if (ValidationUtil.isThereSitaReciever(msg))
                                                 {
-                                                    if (ValidationUtil.isThereSitaReciever(msg))
-                                                    {
-                                                        result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR2MQNMRInfo, MQ_ManagerExp.QUEUEID2, MQ_ManagerExp.GR2MQCONInfo, MQ_ManagerExp.GR2MQMInfo);
-                                                    }
-                                                }
-                                                else
-                                                {
+                                                    result = myMQ.WriteLocalQMsg(msg, MQ_ManagerExp.GR2MQNMRInfo, MQ_ManagerExp.QUEUEID2, MQ_ManagerExp.GR2MQCONInfo, MQ_ManagerExp.GR2MQMInfo);
                                                 }
                                             }
                                         }
@@ -302,8 +290,8 @@ namespace ExpMQManager
                                     // for test email
                                     if (!isLive)
                                     {
-                                        //baseMessage.msgDestAddrEmail = "cpark@wfs.aero;";
-                                        baseMessage.msgDestAddrEmail = "email address will be added before sending email";
+                                        baseMessage.msgDestAddrEmail = "jacob.min@wfs.aero;";
+                                        baseMessage.msgDestAddrEmail = "TEST-email address will be added before sending email";
                                     }
 
                                     if (baseMessage.msgDestAddrEmail != "")
@@ -337,7 +325,17 @@ namespace ExpMQManager
                                         int emailStatus = 1;
                                         try
                                         {
-                                            bool mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
+                                            //Requested by Mike on 3/20/2019
+                                            bool mailSent = false;
+                                            if (msgType.ToUpper() == "EMAIL")
+                                            {
+                                                mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, true);
+                                            }
+                                            else
+                                            {
+                                                mailSent = baseMail.mailSend(baseMessage.msgDestAddrEmail, emailBody, emailSubj, false);
+                                            }
+                                            
                                             if (!mailSent)
                                             {
                                                 email.UpdateQueue(queueid, "S", "Error sending email!");

@@ -42,7 +42,7 @@ namespace ExpMQManager.BLL
             bool needHTMLFormat = true;
             if (subType == null && subType.ToUpper() != "TTN" && subType.ToUpper() != "IAC" && subType.ToUpper() != "CCSF")
             {
-                needHTMLFormat = false;
+                //needHTMLFormat = false;
                 emailBody = emailBody.Replace("</p>", Environment.NewLine);
                 emailBody = emailBody.Replace("<br>", Environment.NewLine);
                 emailBody = emailBody.Replace("<br >", Environment.NewLine);
